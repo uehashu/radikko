@@ -1,0 +1,22 @@
+<h1><%= @station_name %></h1>
+
+<table>
+  <tr>
+    <td>start_date</td>
+    <td>end_date</td>
+    <td>duration_sec</td>
+    <td>title</td>
+  </tr>
+
+  <% @programs.each do |program| %>
+    <tr>
+      <td><%= program.start_date %></td>
+      <td><%= program.end_date %></td>
+      <td><%= program.duration_sec %></td>
+      <td><%= program.title %></td>
+      <td><%= program.performers %></td>
+    </tr>
+  <% end %>
+</table>
+
+<%= link_to "station list", stations_path %>

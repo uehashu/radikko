@@ -1,0 +1,17 @@
+<table>
+  <tr>
+    <td>station_id</td>
+    <td>station_name</td>
+    <td>station_name_ascii</td>
+  </tr>
+
+  <% @stations.each do |station| %>
+    <tr>
+      <td><%= station.area_id %></td>
+      <td><%= link_to station.station_name, station_path(station) %></td>
+      <td><%= station.station_name_ascii %></td>
+    </tr>
+  <% end %>
+</table>
+
+<%= link_to "area list", areas_path %>

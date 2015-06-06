@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  station_id: MyString
+  start_date: 2015-06-06 02:50:31
+  end_date: 2015-06-06 02:50:31
+  duration_sec: 1
+  title: MyString
+  subtitle: MyString
+  performers: MyString
+  description: MyText
+  reserved: MyString
+
+two:
+  station_id: MyString
+  start_date: 2015-06-06 02:50:31
+  end_date: 2015-06-06 02:50:31
+  duration_sec: 1
+  title: MyString
+  subtitle: MyString
+  performers: MyString
+  description: MyText
+  reserved: MyString

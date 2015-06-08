@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
-  
+
+  root 'static_pages#index'
   resources :areas, only: [:index, :show]
   resources :stations, only: [:index, :show]
 

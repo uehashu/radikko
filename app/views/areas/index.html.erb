@@ -1,15 +1,23 @@
-<table>
-  <tr>
-    <td>area_id</td>
-    <td>area_name</td>
-    <td>area_name_kana</td>
-  </tr>
-  
-  <% @areas.each do |area| %>
-    <tr>
-      <td><%= link_to area.area_id, area_path(area) %></td>
-      <td><%= area.area_name %></td>
-      <td><%= area.area_name_kana %></td>
-    </tr>
-  <% end %>
-</table>
+<div>
+  <h2>areas</h2>
+
+  <table class="table table-hover">
+    <thead>
+      <tr>
+	<th>area_id</th>
+	<th>area_name</th>
+	<th>area_name_kana</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @areas.each do |area| %>
+	<tr>
+	  <td><%= link_to area.area_id, area_path(area) %></td>
+	  <td><%= area.area_name %></td>
+	  <td><%= area.area_name_kana %></td>
+	</tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,22 +1,27 @@
-<h1><%= @station_name %></h1>
+<div>
+  <h2><%= @station_name %></h2>
+  
+  <table class="table table-hover">
+    <thead>
+      <tr>
+	<th>start_date</th>
+	<th>end_date</th>
+	<th>duration_sec</th>
+	<th>title</th>
+	<th>performers</th>
+      </tr>
+    </thead>
 
-<table>
-  <tr>
-    <td>start_date</td>
-    <td>end_date</td>
-    <td>duration_sec</td>
-    <td>title</td>
-  </tr>
-
-  <% @programs.each do |program| %>
-    <tr>
-      <td><%= program.start_date %></td>
-      <td><%= program.end_date %></td>
-      <td><%= program.duration_sec %></td>
-      <td><%= program.title %></td>
-      <td><%= program.performers %></td>
-    </tr>
-  <% end %>
-</table>
-
-<%= link_to "station list", stations_path %>
+    <tbody>
+      <% @programs.each do |program| %>
+	<tr>
+	  <td><%= program.start_date %></td>
+	  <td><%= program.end_date %></td>
+	  <td><%= program.duration_sec %></td>
+	  <td><%= program.title %></td>
+	  <td><%= program.performers %></td>
+	</tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

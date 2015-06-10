@@ -1,23 +1,15 @@
-<div>
-  <h2>stations</h2>
+<table>
+  <tr>
+    <td>station_id</td>
+    <td>station_name</td>
+    <td>area_id</td>
+  </tr>
   
-  <table class="table table-hover">
-    <thead>
-      <tr>
-	<th>station_id</th>
-	<th>station_name</th>
-	<th>area_id</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% @stations.each do |station| %>
-	<tr>
-	  <td><%= link_to station.station_id, station_path(station) %></td>
-	  <td><%= station.station_name %></td>
-	  <td><%= station.area_id %></td>
-	</tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+  <% @stations.each do |station| %>
+    <tr>
+      <td><%= link_to station.station_id, station_path(station) %></td>
+      <td><%= station.station_name %></td>
+      <td><%= station.area_id %></td>
+    </tr>
+  <% end %>
+</table>

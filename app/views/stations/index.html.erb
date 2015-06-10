@@ -1,15 +1,21 @@
-<table>
-  <tr>
-    <td>station_id</td>
-    <td>station_name</td>
-    <td>area_id</td>
-  </tr>
-  
-  <% @stations.each do |station| %>
+<h2>Stations</h2>
+
+<table class="table">
+  <thead>
     <tr>
-      <td><%= link_to station.station_id, station_path(station) %></td>
-      <td><%= station.station_name %></td>
-      <td><%= station.area_id %></td>
+      <th>station_id</th>
+      <th>station_name</th>
+      <th>area_id</th>
     </tr>
-  <% end %>
+  </thead>
+
+  <tbody>
+    <% @stations.each do |station| %>
+      <tr>
+	<td><%= link_to station.station_id, station_path(station) %></td>
+	<td><%= station.station_name %></td>
+	<td><%= station.area_id %></td>
+      </tr>
+    <% end %>
+  </tbody>
 </table>

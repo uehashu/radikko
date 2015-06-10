@@ -1,14 +1,9 @@
-<div>
-  <h2><%= @area_name_kana %></h2>
-  
-  <table class="table table-hover">
-    <thead>
-      <tr>
-	<th>station_id</th>
-	<th>station_name</th>
-	<th>station_name_ascii</th>
-      </tr>
-    </thead>
+<table>
+  <tr>
+    <td>station_id</td>
+    <td>station_name</td>
+    <td>station_name_ascii</td>
+  </tr>
 
   <% @stations.each do |station| %>
     <tr>

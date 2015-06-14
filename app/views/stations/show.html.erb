@@ -1,25 +1,52 @@
-<h1><%= @station_name %></h1>
+<div class="row">
+  <div class="col-lg-2">
+    <div class="sidebar-nav-fixed">
+      <div class="navbar navbar-default navbar-nav">
+	<div class="navbar-brand">
+	  
+	  <%= link_to @station_name,"" %>
+	</div>
+	<ul class="nav nav-stacked">
+	  <% for i in 0..6 do %>
+	    <li><%= link_to "#{@week[i].month}月#{@week[i].day}日(#{get_dayofweek_kana_from_date(@week[i])})", "##{get_dayofweek_eng_from_date(@week[i])}" %></li>
+	  <% end %>
+	</ul>
+      </div>
+    </div>
+  </div>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>start_date</th>
-      <th>end_date</th>
-      <th>duration_sec</th>
-      <th>title</th>
-      <th>performers</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @programs.each do |program| %>
-      <tr>
-	<td><%= program.start_date %></td>
-	<td><%= program.end_date %></td>
-	<td><%= program.duration_sec %></td>
-	<td><%= program.title %></td>
-	<td><%= program.performers %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+  <div class="col-lg-10">
+    <table class="table">
+      <thead>
+	<tr>
+	  <th>start_date</th>
+	  <th>end_date</th>
+	  <th>duration_sec</th>
+	  <th>title</th>
+	  <th>performers</th>
+	</tr>
+      </thead>
+      
+      <tbody>
+	<% week = @week.clone %>
+	
+	<% @programs.each do |program| %>
+	  <% if @firstProgram_ids_ofDay.include?(program.id) %>
+	    <% date = week.shift %>
+	    <tr id="<%= get_dayofweek_eng_from_date(date) %>">
+	      <th colspan="5">
+		<%= p "#{date.month}月#{date.day}日(#{get_dayofweek_kana_from_date(date)})" %>
+	      </th>
+	    </tr>
+	  <% end %>
+	  <tr id=<%= program.id %>>
+	    <td><%= program.start_date %></td>
+	    <td><%= program.end_date %></td>
+	    <td><%= program.duration_sec %></td>
+	    <td><%= program.title %></td>
+	    <td><%= program.performers %></td>
+	  </tr>
+	<% end %>
+      </tbody>
+    </table>
+  </div>

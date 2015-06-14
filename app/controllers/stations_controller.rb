@@ -28,7 +28,12 @@ class StationsController < ApplicationController
     @programs = Program.where(station_id: @station_id).where("start_date >= ?", @week[0].to_s)
     @firstProgram_ids_ofDay = Array.new(7)
     for i in 0..6 do
-      @firstProgram_ids_ofDay[i] = @programs.find_by("start_date >= ? and start_date < ?", @week[i].to_s, (@week[i]+1).to_s).id
+      if @programs.find_by("start_date >= ? and start_date < ?", @week[i].to_s, (@week[i]+1).to_s) != nil
+      then
+        @firstProgram_ids_ofDay[i] = @programs.find_by("start_date >= ? and start_date < ?", @week[i].to_s, (@week[i]+1).to_s).id
+      else
+        @firstProgram_ids_ofDay[i] = nil;
+      end
     end
   end
 end

@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html>
+  
   <head>
+    <script>
+    var shiftWindow = function() { scrollBy(0, -50) };
+    window.addEventListener("hashchange", shiftWindow);
+    function load() { if (window.location.hash) shiftWindow(); }
+    </script>
+    
     <title>Radikko</title>
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
     <%= csrf_meta_tags %>
     <%= render "layouts/shim" %>
   </head>
-
-  <body>
+  
+  <body onload="load()">
     <%= render "layouts/header" %>
     
     <div class="container">

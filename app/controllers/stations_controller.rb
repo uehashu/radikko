@@ -15,22 +15,23 @@ class StationsController < ApplicationController
   private
 
   def set_item
-    @today = Date.today
+    @today = Date.today.in_time_zone
+    monday = @today.beginning_of_week
     @week = Array.new(7);
     for i in 0..6 do
-      @week[i] = (@today - @today.cwday + i + 1)
+      @week[i] = (monday + i.day)
     end
     
     @station = Station.find(params[:id])
     @station_id = @station.station_id
     @area_id = @station.area_id
     @station_name = @station.station_name
-    @programs = Program.where(station_id: @station_id).where("start_date >= ?", @week[0].to_s)
+    @programs = Program.where(station_id: @station_id).where("start_date >= ?", @week[0])
     @firstProgram_ids_ofDay = Array.new(7)
     for i in 0..6 do
-      if @programs.find_by("start_date >= ? and start_date < ?", @week[i].to_s, (@week[i]+1).to_s) != nil
+      if @programs.find_by("start_date >= ? and start_date < ?", @week[i], (@week[i]+1.day)) != nil
       then
-        @firstProgram_ids_ofDay[i] = @programs.find_by("start_date >= ? and start_date < ?", @week[i].to_s, (@week[i]+1).to_s).id
+        @firstProgram_ids_ofDay[i] = @programs.find_by("start_date >= ? and start_date < ?", @week[i], (@week[i]+1.day)).id
       else
         @firstProgram_ids_ofDay[i] = nil;
       end

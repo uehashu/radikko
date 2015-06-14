@@ -10,9 +10,9 @@ class TempProgram
   def initialize(station_id, start_date, end_date, duration_sec,
                  title, subtitle, performers, description)
     @station_id = station_id
-    @start_date = start_date
-    @end_date = end_date
-    @duration_sec = duration_sec
+    @start_date = Time.zone.parse(start_date)
+    @end_date = Time.zone.parse(end_date)
+    @duration_sec = duration_sec.to_i
     @title = title
     @subtitle = subtitle
     @performers = performers

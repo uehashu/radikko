@@ -1,20 +1,20 @@
 # coding: utf-8
 module StationsHelper
   def get_dayofweek_kana_from_date(date)
-    case date.cwday
-    when 1 then
+    case date - date.beginning_of_week
+    when 0.day then
       return "月"
-    when 2 then
+    when 1.day then
       return "火"
-    when 3 then
+    when 2.day then
       return "水"
-    when 4 then
+    when 3.day then
       return "木"
-    when 5 then
+    when 4.day then
       return "金"
-    when 6 then
+    when 5.day then
       return "土"
-    when 7 then
+    when 6.day then
       return "日"
     else
       return nil
@@ -24,20 +24,20 @@ module StationsHelper
   
   
   def get_dayofweek_eng_from_date(date)
-    case date.cwday
-    when 1 then
+    case date - date.beginning_of_week
+    when 0.day then
       return "mon"
-    when 2 then
+    when 1.day then
       return "tue"
-    when 3 then
+    when 2.day then
       return "wed"
-    when 4 then
+    when 3.day then
       return "thu"
-    when 5 then
+    when 4.day then
       return "fri"
-    when 6 then
+    when 5.day then
       return "sut"
-    when 7 then
+    when 6.day then
       return "sun"
     else
       return nil

@@ -23,15 +23,30 @@ end
 
 
 class ProgramPoller
-  attr_reader :weeklyprogramlist_url_prefix
+  attr_reader :weeklyprogramlist_url_prefix,
+              :todayprogramlist_url_prefix,
+              :tomorrowprogramlist_url_prefix
   @weeklyprogramlist_url_prefix = "http://radiko.jp/v2/api/program/station/weekly?station_id="
+  @todayprogramlist_url_prefix = "http://radiko.jp/v2/api/program/today?area_id="
+  @tomorrowprogramlist_url_prefix = "http://radiko.jp/v2/api/program/tomorrow?area_id="
   
-  # url から番組表の配列を取得するメソッド.
+  # station_id から週間番組表の配列を取得するメソッド.
   def self.get_weeklyprograms_from_stationid(station_id)
     return get_programs_from_url("#{@weeklyprogramlist_url_prefix}#{station_id}")
   end
-
-
+  
+  # area_id から今日の番組表の配列を取得するメソッド.
+  def self.get_todayprograms_from_areaid(area_id)
+    return get_programs_from_url("#{@todayprogramlist_url_prefix}#{area_id}")
+  end
+  
+  # area_id から明日の番組表の配列を取得するメソッド.
+  def self.get_tomorrowprograms_from_areaid(area_id)
+    return get_programs_from_url("#{@tomorrowprogramlist_url_prefix}#{area_id}")
+  end
+  
+  
+  
 
   private
   
@@ -43,24 +58,29 @@ class ProgramPoller
     programs = Array.new()
     
     # xml をパースして, 各番組情報を抽出
-    doc = REXML::Document.new(programs_xml)
-    doc.elements.each('radiko/stations') do |program_per_station|
-      program_per_station.elements.each('station') do |station|
-        station_id = station.attribute('id').to_s
-        station.elements.each('scd/progs') do |program_daily|
-          program_daily.elements.each('prog') do |program|
-            start_date = program.attribute('ft').to_s
-            end_date = program.attribute('to').to_s
-            duration_sec = program.attribute('dur').to_s
-            title = program.elements['title'].text
-            subtitle = program.elements['sub_title'].text
-            performers = program.elements['pfm'].text
-            description = program.elements['desc'].text
-            programs << TempProgram.new(station_id,start_date,end_date,duration_sec,
-                                        title,subtitle,performers,description)
+    begin
+      doc = REXML::Document.new(programs_xml)
+      
+      doc.elements.each('radiko/stations') do |program_per_station|
+        program_per_station.elements.each('station') do |station|
+          station_id = station.attribute('id').to_s
+          station.elements.each('scd/progs') do |program_daily|
+            program_daily.elements.each('prog') do |program|
+              start_date = program.attribute('ft').to_s
+              end_date = program.attribute('to').to_s
+              duration_sec = program.attribute('dur').to_s
+              title = program.elements['title'].text
+              subtitle = program.elements['sub_title'].text
+              performers = program.elements['pfm'].text
+              description = program.elements['desc'].text
+              programs << TempProgram.new(station_id,start_date,end_date,duration_sec,
+                                          title,subtitle,performers,description)
+            end
           end
         end
       end
+    rescue REXML::ParseException
+      p "#{url} parse exception."
     end
     
     return programs

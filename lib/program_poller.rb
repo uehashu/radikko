@@ -54,8 +54,15 @@ class ProgramPoller
   # 全ての放送局における週間番組表の配列を取得するメソッド.
   def self.get_all_weeklyprograms
     programs = Array.new()
+    station_uniq_ids = Array.new()
     Station.all.each do |station|
-      programs.concat(get_weeklyprograms_from_stationid(station.station_id))
+      unless station_uniq_ids.include?(station.station_id.to_s)
+        station_uniq_ids << station.station_id.to_s
+      end
+    end
+        
+    station_uniq_ids.each do |station_id|
+      programs.concat(get_weeklyprograms_from_stationid(station_id))
     end
     return programs
   end

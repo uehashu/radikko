@@ -35,10 +35,14 @@ class ProgramPoller
     return get_programs_from_url("#{@weeklyprogramlist_url_prefix}#{station_id}")
   end
   
+  
+  
   # area_id から今日の番組表の配列を取得するメソッド.
   def self.get_todayprograms_from_areaid(area_id)
     return get_programs_from_url("#{@todayprogramlist_url_prefix}#{area_id}")
   end
+  
+  
   
   # area_id から明日の番組表の配列を取得するメソッド.
   def self.get_tomorrowprograms_from_areaid(area_id)
@@ -47,7 +51,84 @@ class ProgramPoller
   
   
   
-
+  # 全ての放送局における週間番組表の配列を取得するメソッド.
+  def self.get_all_weeklyprograms
+    programs = Array.new()
+    Station.all.each do |station|
+      programs.concat(get_weeklyprograms_from_stationid(station.station_id))
+    end
+    return programs
+  end
+  
+  
+  
+  # 全ての地域における今日の番組表の配列を取得するメソッド.
+  def self.get_all_todayprograms
+    programs = Array.new()
+    Area.all.each do |area|
+      programs.concat(get_todayprograms_from_areaid(area.area_id))
+    end
+    return programs
+  end
+  
+  
+  
+  # 全ての地域における明日の番組表の配列を取得するメソッド.
+  def self.get_all_tomorrowprograms
+    programs = Array.new()
+    Area.all.each do |area|
+      programs.concat(get_tomorrowprograms_from_areaid(area.area_id))
+    end
+    return programs
+  end
+  
+  
+  
+  # station_id から週間番組表を取得し, それを用いてレコードを更新するメソッド.
+  def self.update_weeklyprograms_from_stationid(station_id)
+    weeklyprograms = get_weeklyprograms_from_stationid(station_id)
+    update_programs_from_tempprograms(weeklyprograms)
+  end
+  
+  
+  
+  # area_id から今日の番組表を取得し, それを用いてレコードを更新するメソッド.
+  def self.update_todayprograms_from_areaid(area_id)
+    todayprograms = get_todayprograms_from_areaid(area_id)
+    update_programs_from_tempprograms(todayprograms)
+  end
+  
+  
+  
+  # area_id から明日の番組表を取得し, それを用いてレコードを更新するメソッド.
+  def self.update_tomorrowprograms_from_areaid(area_id)
+    tomorrowprograms = get_tomorrowprograms_from_areaid(area_id)
+    update_programs_from_tempprograms(tomorrowprograms)
+  end
+  
+  
+  
+  # 全ての放送局における週間番組表を取得し, それを用いてレコードを更新するメソッド.
+  def self.update_all_weeklyprograms
+    update_programs_from_tempprograms(get_all_weeklyprograms)
+  end
+  
+  
+  
+  # 全ての地域における今日の番組表を取得し, それを用いてレコードを更新するメソッド.
+  def self.update_all_todayprograms
+    update_programs_from_tempprograms(get_all_todayprograms)
+  end
+  
+  
+  
+  # 全ての地域における明日の番組表を取得し, それを用いてレコードを更新するメソッド.
+  def self.update_all_tomorrowprograms
+    update_programs_from_tempprograms(get_all_tomorrowprograms)
+  end
+  
+  
+  
   private
   
   # url から番組表を取得するメソッド. 
@@ -85,4 +166,20 @@ class ProgramPoller
     
     return programs
   end
+  
+  
+  
+  # temp_programs を用いて番組表を更新するメソッド.
+  def self.update_programs_from_tempprograms(temp_programs)
+    temp_programs.each do |program|
+      unless Program.exists?(station_id: program.station_id, start_date: program.start_date,
+                             end_date: program.end_date, duration_sec: program.duration_sec,
+                             title: program.title)
+        Program.create(station_id: program.station_id, start_date: program.start_date,
+                       end_date: program.end_date, duration_sec: program.duration_sec,
+                       title: program.title, subtitle: program.subtitle,
+                       performers: program.performers, description: program.description,
+                       reserved: "no")
+      end
+    end
 end

@@ -28,26 +28,6 @@ stations.each do |station|
   end
 end
 
-
-station_uniq_ids = Array.new()
-stations.each do |station|
-  unless station_uniq_ids.include?(station.station_id)
-    station_uniq_ids << station.station_id
-  end
-end
-
-station_uniq_ids.each do |station_id|
-  weeklyprograms = ProgramPoller.get_weeklyprograms_from_stationid(station_id)
-  weeklyprograms.each do |program|
-    unless Program.exists?(station_id: program.station_id, start_date: program.start_date,
-                           end_date: program.end_date, duration_sec: program.duration_sec,
-                           title: program.title)
-      Program.create(station_id: program.station_id, start_date: program.start_date,
-                     end_date: program.end_date, duration_sec: program.duration_sec,
-                     title: program.title, subtitle: program.subtitle,
-                     performers: program.performers, description: program.description,
-                     reserved: "no")
-    end
-  end
-  p "#{station_id} is finished."
-end
+ProgramPoller.update_all_weeklyprograms
+ProgramPoller.update_all_todayprograms
+ProgramPoller.update_all_tomorrowprograms

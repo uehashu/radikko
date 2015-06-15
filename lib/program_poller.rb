@@ -189,4 +189,5 @@ class ProgramPoller
                        reserved: "no")
       end
     end
+  end
 end

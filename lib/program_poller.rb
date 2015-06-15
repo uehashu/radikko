@@ -117,21 +117,34 @@ class ProgramPoller
   
   # 全ての放送局における週間番組表を取得し, それを用いてレコードを更新するメソッド.
   def self.update_all_weeklyprograms
-    update_programs_from_tempprograms(get_all_weeklyprograms)
+    station_uniq_ids = Array.new()
+    Station.all.each do |station|
+      unless station_uniq_ids.include?(station.station_id.to_s)
+        station_uniq_ids << station.station_id.to_s
+      end
+    end
+
+    station_uniq_ids.each do |station_id|
+      update_weeklyprograms_from_stationid(station_id)
+    end
   end
   
   
   
   # 全ての地域における今日の番組表を取得し, それを用いてレコードを更新するメソッド.
   def self.update_all_todayprograms
-    update_programs_from_tempprograms(get_all_todayprograms)
+    Area.all.each do |area|
+      update_todayprograms_from_areaid(area.area_id)
+    end
   end
   
   
   
   # 全ての地域における明日の番組表を取得し, それを用いてレコードを更新するメソッド.
   def self.update_all_tomorrowprograms
-    update_programs_from_tempprograms(get_all_tomorrowprograms)
+    Area.all.each do |area|
+      update_tomorrowprograms_from_areaid(area.area_id)
+    end
   end
   
   

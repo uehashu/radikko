@@ -23,18 +23,27 @@ end
 
 
 class ProgramPoller
-  attr_reader :programlist_url_prefix
-  @programlist_url_prefix = "http://radiko.jp/v2/api/program/station/weekly?station_id="
+  attr_reader :weeklyprogramlist_url_prefix
+  @weeklyprogramlist_url_prefix = "http://radiko.jp/v2/api/program/station/weekly?station_id="
   
   # url から番組表の配列を取得するメソッド.
   def self.get_weeklyprograms_from_stationid(station_id)
-    parsed_url = URI.parse("#{@programlist_url_prefix}#{station_id}")
-    weeklyprograms_xml = Net::HTTP.get(parsed_url)
+    return get_programs_from_url("#{@weeklyprogramlist_url_prefix}#{station_id}")
+  end
+
+
+
+  private
+  
+  # url から番組表を取得するメソッド. 
+  def self.get_programs_from_url(url)
+    parsed_url = URI.parse(url)
+    programs_xml = Net::HTTP.get(parsed_url)
     
     programs = Array.new()
     
     # xml をパースして, 各番組情報を抽出
-    doc = REXML::Document.new(weeklyprograms_xml)
+    doc = REXML::Document.new(programs_xml)
     doc.elements.each('radiko/stations') do |program_per_station|
       program_per_station.elements.each('station') do |station|
         station_id = station.attribute('id').to_s

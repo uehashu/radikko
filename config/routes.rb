@@ -1,8 +1,11 @@
 Rails.application.routes.draw do
 
+  get 'configures/edit'
+
   root 'static_pages#index'
   resources :areas, only: [:index, :show]
   resources :stations, only: [:index, :show]
+  match 'config', to: 'configures#edit', via: 'get'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

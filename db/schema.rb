@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150605175031) do
+ActiveRecord::Schema.define(version: 20150618115305) do
 
   create_table "areas", id: false, force: :cascade do |t|
     t.string "area_id"
@@ -20,6 +20,15 @@ ActiveRecord::Schema.define(version: 20150605175031) do
   end
 
   add_index "areas", ["area_id"], name: "index_areas_on_area_id", unique: true
+
+  create_table "configures", force: :cascade do |t|
+    t.string   "key"
+    t.string   "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "configures", ["key"], name: "index_configures_on_key", unique: true
 
   create_table "programs", force: :cascade do |t|
     t.string   "station_id"

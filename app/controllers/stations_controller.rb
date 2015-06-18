@@ -22,7 +22,7 @@ class StationsController < ApplicationController
       @week[i] = (monday + i.day)
     end
     
-    @station = Station.find(params[:id])
+    @station = Station.find_by_station_id(params[:id])
     @station_id = @station.station_id
     @area_id = @station.area_id
     @station_name = @station.station_name

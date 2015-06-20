@@ -1,2 +1,21 @@
-<h1>Configures#edit</h1>
-<p>Find me in app/views/configures/edit.html.erb</p>
+<h2>Configure</h2>
+
+<% if @success != nil %>
+  <div class="alert alert-success" role="alert"><%= @success %></div>
+<% elsif @error != nil %>
+  <div class="alert alert-danger" role="alert"><%= @error %></div>
+<% end %>
+
+<div class="form-group">
+  <%= form_tag "config", method: "put" do %>
+    <%= label_tag "storedir", "basic directory to store recorded media",
+    class: "control-label" %>
+    <%= text_field_tag :storedir, @storedir,
+    class: "form-control", placeholder: "/var/radikko/" %>
+</div>
+
+<div class="form-group">
+  <%= submit_tag :change, class: "btn btn-primary" %>
+  <%= submit_tag :cancel, class: "btn btn-default" %>
+  <% end %>
+</div>

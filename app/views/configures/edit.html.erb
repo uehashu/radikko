@@ -7,9 +7,9 @@
 <% end %>
 
 
-<%= form_tag "config", method: "put" do %>
+<%= form_tag :config, method: "put" do %>
   <div class="form-group">
-    <%= label_tag "storedir", "basic directory to store recorded media",
+    <%= label_tag :storedir, "basic directory to store recorded media",
     class: "control-label" %>
     <%= text_field_tag :storedir, @storedir,
     class: "form-control", placeholder: "/var/radikko/" %>

@@ -2,10 +2,10 @@
   <div class="navbar navbar-default navbar-inverse navbar-fixed-top">
     <div class="container">
       <ul class="nav navbar-nav navbar-right">
-	<li><%= link_to "Radikko", root_path %></li>
-	<li><%= link_to "Area", areas_path %></li>
-	<li><%= link_to "Station", stations_path %></li>
-	<li><%= link_to "config" do %>
+	<li><%= link_to :Radikko, root_path %></li>
+	<li><%= link_to :Area, areas_path %></li>
+	<li><%= link_to :Station, stations_path %></li>
+	<li><%= link_to config_path do %>
 	  <span class="glyphicon glyphicon-cog"></span>
 	<% end %>
 	</li>

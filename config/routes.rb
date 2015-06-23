@@ -4,8 +4,8 @@ Rails.application.routes.draw do
   resources :areas, only: [:index, :show]
   resources :stations, only: [:index, :show]
   resource :configure, only: [:edit, :update]
-  match :config, to: 'configures#edit', via: 'get'
-  match :config, to: 'configures#update', via: 'put'
+  get :config, to: 'configures#edit'
+  put :config, to: 'configures#update'
   
 
   

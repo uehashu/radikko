@@ -26,7 +26,7 @@ class StationsController < ApplicationController
     @station_id = @station.station_id
     @area_id = @station.area_id
     @station_name = @station.station_name
-    @programs = Program.where(station_id: @station_id).where("start_date >= ?", @week[0])
+    @programs = Program.where(station_id: @station_id).where("start_date >= ?", @week[0]).order("start_date")
     @firstProgram_ids_ofDay = Array.new(7)
     for i in 0..6 do
       if @programs.find_by("start_date >= ? and start_date < ?", @week[i], (@week[i]+1.day)) != nil

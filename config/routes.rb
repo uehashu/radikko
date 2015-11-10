@@ -7,7 +7,8 @@ Rails.application.routes.draw do
   get :config, to: 'configures#edit'
   put :config, to: 'configures#update'
   
-
+  require 'sidekiq/web'
+  mount Sidekiq::Web => '/sidekiq'
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

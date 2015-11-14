@@ -51,4 +51,6 @@ ActiveRecord::Schema.define(version: 20150618115305) do
     t.string "area_id"
   end
 
+  add_index "stations", ["station_id"], name: "index_stations_on_station_id", unique: true
+
 end

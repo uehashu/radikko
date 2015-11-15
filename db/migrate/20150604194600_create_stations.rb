@@ -6,8 +6,5 @@ class CreateStations < ActiveRecord::Migration
       t.string :station_name_ascii
       t.string :area_id
     end
-
-    add_index :stations, :station_id, unique: true
-    
   end
 end

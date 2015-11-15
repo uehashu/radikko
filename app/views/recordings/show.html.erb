@@ -1,0 +1,39 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Area:</strong>
+  <%= @recording.area_id %>
+</p>
+
+<p>
+  <strong>Station:</strong>
+  <%= @recording.station_id %>
+</p>
+
+<p>
+  <strong>Start datetime:</strong>
+  <%= @recording.start_datetime %>
+</p>
+
+<p>
+  <strong>Recording second:</strong>
+  <%= @recording.recording_second %>
+</p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @recording.title %>
+</p>
+
+<p>
+  <strong>Filename:</strong>
+  <%= @recording.filename %>
+</p>
+
+<p>
+  <strong>Is recorded:</strong>
+  <%= @recording.is_recorded %>
+</p>
+
+<%= link_to 'Edit', edit_recording_path(@recording) %> |
+<%= link_to 'Back', recordings_path %>

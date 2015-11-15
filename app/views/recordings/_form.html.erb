@@ -1,0 +1,41 @@
+<%= form_for(@recording) do |f| %>
+  <% if @recording.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@recording.errors.count, "error") %> prohibited this recording from being saved:</h2>
+
+      <ul>
+      <% @recording.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :area_id %><br>
+    <%= f.number_field :area_id %>
+  </div>
+  <div class="field">
+    <%= f.label :station_id %><br>
+    <%= f.text_field :station_id %>
+  </div>
+  <div class="field">
+    <%= f.label :start_datetime %><br>
+    <%= f.datetime_select :start_datetime %>
+  </div>
+  <div class="field">
+    <%= f.label :recording_second %><br>
+    <%= f.number_field :recording_second %>
+  </div>
+  <div class="field">
+    <%= f.label :title %><br>
+    <%= f.text_field :title %>
+  </div>
+  <div class="field">
+    <%= f.label :filename %><br>
+    <%= f.text_field :filename %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

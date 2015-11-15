@@ -6,8 +6,25 @@
   <div class="alert alert-danger" role="alert"><%= @error %></div>
 <% end %>
 
-
 <%= form_tag :config, method: "put" do %>
+  <div class="form-group">
+    <%= label_tag :path_rtmpdump, "rtmpdump path", class: "control-label" %>
+    <%= text_field_tag :path_rtmpdump, @path_rtmpdump,
+    class: "form-control" %>
+  </div>
+  
+  <div class="form-group">
+    <%= label_tag :path_swfextract, "swfextract path", class: "control-label" %>
+    <%= text_field_tag :path_swfextract, @path_swfextract,
+    class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= label_tag :path_ffmpeg, "ffmpeg path", class: "control-label" %>
+    <%= text_field_tag :path_ffmpeg, @path_ffmpeg,
+    class: "form-control" %>
+  </div>
+  
   <div class="form-group">
     <%= label_tag :storedir, "basic directory to store recorded media",
     class: "control-label" %>

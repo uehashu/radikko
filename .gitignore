@@ -18,3 +18,5 @@
 
 /vendor/bundle
 /vendor/cache
+
+/public/assets

@@ -9,12 +9,12 @@ require 'base64'
 class ProgramRecorder
 
   #
-  # channel_name : string
+  # station_id : string
   # start_date : date
   # recording_second : integer
   # mail_address : string(optional)
   # password : string(optional)
-  def self.record(channel_name, recording_second, filename,
+  def self.record(station_id, recording_second, filename,
                   mail_address=nil, password=nil)
     playerurl = "http://radiko.jp/player/swf/player_4.1.0.00.swf"
     
@@ -144,7 +144,7 @@ class ProgramRecorder
       p "auth1_fms につながらない"
       return response
     end
-    auth1_params = response.body.match(/^(.+=.+\r\n)+/).to_s.scan(/(.+)=(.+)\r\n/).to_h
+    auth1_params = Hash[response.body.match(/^(.+=.+\r\n)+/).to_s.scan(/(.+)=(.+)\r\n/)]
     authtoken = auth1_params["X-Radiko-AuthToken"]
     keylength = auth1_params["X-Radiko-KeyLength"].to_i
     keyoffset = auth1_params["X-Radiko-KeyOffset"].to_i
@@ -176,13 +176,13 @@ class ProgramRecorder
     end
 
     ### step5. stream-url を取得する ###
-    url = "http://radiko.jp/v2/station/stream_multi/#{channel_name}.xml"
+    url = "http://radiko.jp/v2/station/stream_multi/#{station_id}.xml"
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
     req = Net::HTTP::Get.new(uri.request_uri)
     response = http.request(req)
-    stream_urls = response.body.match(/(<item.+<\/item>\s*)+/).to_s.
-                  scan(/<.+areafree=\"(0|1)\">(.+)<\/.+>/).to_h
+    stream_urls = Hash[response.body.match(/(<item.+<\/item>\s*)+/).to_s.
+                        scan(/<.+areafree=\"(0|1)\">(.+)<\/.+>/)]
     if premium
     then
       stream_url = stream_urls["1"]
@@ -203,7 +203,7 @@ class ProgramRecorder
     end
     cmd_rtmpdump = path_rtmpdump
     cmd_rtmpdump += " --rtmp #{url_parts[0]}"
-    cmd_rtmpdump += " --app #{channel_name}/#{url_parts[1]}"
+    cmd_rtmpdump += " --app #{station_id}/#{url_parts[1]}"
     cmd_rtmpdump += " --playpath #{url_parts[2]}"
     cmd_rtmpdump += " --swfVfy #{playerurl}"
     cmd_rtmpdump += " --conn S:\"\" --conn S:\"\" --conn S:\"\" --conn S:#{authtoken}"
@@ -217,6 +217,10 @@ class ProgramRecorder
       p "ろくおんせいこう"
     else
       p "ろくおんしっぱい"
+      p "params..."
+      p "station_id: #{station_id}"
+      p "command..."
+      p "#{cmd_rtmpdump}"
     end
   end
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150618115305) do
+ActiveRecord::Schema.define(version: 20151114214533) do
 
   create_table "areas", id: false, force: :cascade do |t|
     t.string "area_id"
@@ -44,13 +44,24 @@ ActiveRecord::Schema.define(version: 20150618115305) do
     t.datetime "updated_at",   null: false
   end
 
+  create_table "recordings", force: :cascade do |t|
+    t.integer  "area_id"
+    t.string   "station_id"
+    t.datetime "start_datetime"
+    t.integer  "recording_second"
+    t.string   "title"
+    t.string   "filename"
+    t.string   "job_id"
+    t.boolean  "is_recorded"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
   create_table "stations", force: :cascade do |t|
     t.string "station_id"
     t.string "station_name"
     t.string "station_name_ascii"
     t.string "area_id"
   end
-
-  add_index "stations", ["station_id"], name: "index_stations_on_station_id", unique: true
 
 end

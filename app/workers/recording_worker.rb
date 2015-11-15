@@ -5,7 +5,14 @@ class RecordingWorker
 
   sidekiq_options retry: false
   
-  def perform(program_id)
-    
+  def perform(recording_id)
+    Rails.logger.info("pulsed")
+    recording = Recording.find(recording_id)
+
+    recording.update_attribute(:is_recorded, true)
+    filename_full = Configure.where(key: "storedir").first.value + "/" + recording.filename
+    ProgramRecorder.record(recording.station_id,
+                           recording.recording_second,
+                           filename_full)
   end
 end

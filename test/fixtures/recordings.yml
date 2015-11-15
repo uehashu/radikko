@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  area_id: 1
+  station_id: 1
+  start_datetime: 2015-11-15 06:45:33
+  recording_second: 1
+  title: MyString
+  filename: MyString
+  is_recorded: false
+
+two:
+  area_id: 1
+  station_id: 1
+  start_datetime: 2015-11-15 06:45:33
+  recording_second: 1
+  title: MyString
+  filename: MyString
+  is_recorded: false

@@ -1,14 +1,28 @@
 <header>
-  <div class="navbar navbar-default navbar-inverse navbar-fixed-top">
+  <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
-      <ul class="nav navbar-nav navbar-right">
-	<li><%= link_to :Radikko, root_path %></li>
-	<li><%= link_to :Area, areas_path %></li>
-	<li><%= link_to :Station, stations_path %></li>
-	<li><%= link_to :Recording, recordings_path %></li>
-	<li><%= link_to config_path do %>
+      <ul class="nav navbar-nav">
+	<li class="hidden-xs"><%= link_to :Radikko, root_path %></li>
+	<li class="hidden-xs"><%= link_to :Area, areas_path %></li>
+	<li class="hidden-xs"><%= link_to :Station, stations_path %></li>
+	<li class="hidden-xs"><%= link_to :Recording, recordings_path %></li>
+	<li class="hidden-xs"><%= link_to config_path do %>
 	  <span class="glyphicon glyphicon-cog"></span>
 	<% end %>
+	</li>
+	<li class="dropdown visible-xs">
+	  <%= link_to "#", class: "dropdown-toggle", "data-toggle" => "dropdown" do %>
+	    <span class="glyphicon glyphicon-align-justify"></span>
+	    <b class="caret"></b>
+	  <% end %>
+	  <ul class="dropdown-menu">
+	    <li><%= link_to :Radikko, root_path %></li>
+	    <li><%= link_to :Area, areas_path %></li>
+	    <li><%= link_to :Station, stations_path %></li>
+	    <li><%= link_to :Recording, recordings_path %></li>
+	    <li class="divider"></li>
+	    <li><%= link_to :Config, config_path %></li>
+	  </ul>
 	</li>
       </ul>
     </div>

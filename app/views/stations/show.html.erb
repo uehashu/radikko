@@ -1,12 +1,14 @@
 <div class="row">
-  <div class="col-lg-2">
+  <div class="col-lg-2 col-md-2 col-sm-3 hidden-xs">
     <div class="sidebar-nav-fixed">
-      <div class="navbar navbar-default navbar-nav">
-	<div class="navbar-brand">
-	  
-	  <%= link_to @station_name,"" %>
+      <div class="navbar navbar-default text-center">
+	
+	<div class="navbar-header">
+	  <%= link_to @station_name, station_path(@station), class: "navbar-brand" %>
 	</div>
-	<ul class="nav nav-stacked">
+	
+	<ul class="nav nav-pills nav-stacked">
+	  <div class="divider-vertical"></div>
 	  <% for i in 0..6 do %>
 	    <li><%= link_to "#{@week[i].month}月#{@week[i].day}日(#{get_dayofweek_kana_from_date(@week[i])})", "##{get_dayofweek_eng_from_date(@week[i])}" %></li>
 	  <% end %>
@@ -14,8 +16,8 @@
       </div>
     </div>
   </div>
-
-  <div class="col-lg-10">
+  
+  <div class="col-lg-10 col-md-10 col-sm-9 col-xs-12">
     <table class="table">
       <thead>
 	<tr>

@@ -58,3 +58,5 @@ end
 gem 'bootstrap-sass'
 gem 'sidekiq'
 gem 'sinatra'
+
+gem 'whenever'

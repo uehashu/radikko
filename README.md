@@ -23,6 +23,13 @@ Notice
 めんどくさい.
 Gemfile で OS を自動的に判別するようにしてるけど, Gemfile.lock も変更しなければならない.
 
-```bundle update libv8```
+```sudo -u www bundle update libv8```
 
 を実行すれば, 使っている OS に適した libv8 を入れ, Gemfile.lock を適切に更新してくれる.
+
+### wheneverize ###
+番組表を自動的に更新するために, インストールする際に whenever を用いて crontab を 自動生成する.
+
+```sudo -u www bundle whenever -w```
+
+を1回実行すればおっけー.

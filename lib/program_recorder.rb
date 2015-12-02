@@ -201,6 +201,7 @@ class ProgramRecorder
     else
       path_rtmpdump = Configure.where(key: "path_rtmpdump").first.value
     end
+    filename_replaced = filename.gsub(/ /,'\ ') # 半角スペースへの対応
     cmd_rtmpdump = path_rtmpdump
     cmd_rtmpdump += " --rtmp #{url_parts[0]}"
     cmd_rtmpdump += " --app #{station_id}/#{url_parts[1]}"
@@ -209,7 +210,7 @@ class ProgramRecorder
     cmd_rtmpdump += " --conn S:\"\" --conn S:\"\" --conn S:\"\" --conn S:#{authtoken}"
     cmd_rtmpdump += " --live"
     cmd_rtmpdump += " --stop #{recording_second}"
-    cmd_rtmpdump += " --flv #{filename}"
+    cmd_rtmpdump += " --flv \'#{filename}\'"
 
     status = system(cmd_rtmpdump)
 

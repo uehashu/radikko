@@ -14,7 +14,20 @@ class RecordingsController < ApplicationController
 
   # GET /recordings/new
   def new
-    @recording = Recording.new
+    if params[:program_id] == nil || !Program.exists?(params[:program_id])
+      @recording = Recording.new
+    else
+      program_params = Hash.new
+      program = Program.find(params[:program_id])
+      program_params[:station_id] = program.station_id
+      program_params[:start_datetime] = program.start_date
+      program_params[:recording_second] = program.duration_sec
+      program_params[:title] = program.title
+      program_params[:filename] = program.start_date.strftime('%Y%m%d%H%M') + "_" +
+                                  program.title.gsub(/:|;|>|<|"|\/|\?|\\|\*|\|/,"_") +
+                                  ".flv"
+      @recording = Recording.new(program_params)
+    end
   end
 
   # GET /recordings/1/edit

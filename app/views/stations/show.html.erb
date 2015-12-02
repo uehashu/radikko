@@ -25,7 +25,8 @@
 	  <th>end_date</th>
 	  <th>duration_sec</th>
 	  <th>title</th>
-	  <th>performers</th>
+	  <th class="hidden-xs">performers</th>
+	  <th></th>
 	</tr>
       </thead>
       
@@ -42,11 +43,12 @@
 	    </tr>
 	  <% end %>
 	  <tr id=<%= program.id %>>
-	    <td><%= program.start_date %></td>
-	    <td><%= program.end_date %></td>
+	    <td><%= program.start_date.strftime('%H:%M') %></td>
+	    <td><%= program.end_date.strftime('%H:%M') %></td>
 	    <td><%= program.duration_sec %></td>
 	    <td><%= program.title %></td>
-	    <td><%= program.performers %></td>
+	    <td class="hidden-xs"><%= program.performers %></td>
+	    <td><%= link_to 'rec', new_recording_path(program_id: program.id) %></td>
 	  </tr>
 	<% end %>
       </tbody>

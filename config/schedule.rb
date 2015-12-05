@@ -21,6 +21,7 @@
 
 set :output, "log/crontab.log"
 set :job_template, "/usr/bin/env bash -l -c ':job'"
+env :PATH, ENV['PATH']
 
 every :monday, at: '6:00 am' do
   runner "ProgramPoller.update_all_weeklyprograms"

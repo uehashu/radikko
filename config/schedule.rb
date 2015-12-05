@@ -20,6 +20,7 @@
 # Learn more: http://github.com/javan/whenever
 
 set :output, "log/crontab.log"
+set :job_template, "/usr/bin/env bash -l -c ':job'"
 
 every :monday, at: '6:00 am' do
   runner "ProgramPoller.update_all_weeklyprograms"

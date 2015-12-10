@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<h2>Recordeds</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>area</th>
+      <th>station</th>
+      <th>date</th>
+      <th>second</th>
+      <th>title</th>
+      <th>filename</th>
+      <th colspan="2"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @recordings.each do |recording| %>
+      <tr>
+        <td><%= recording.area_id %></td>
+        <td><%= recording.station_id %></td>
+        <td><%= recording.start_datetime %> - <%= recording.start_datetime + recording.recording_second %></td>
+        <td><%= recording.recording_second %></td>
+        <td><%= recording.title %></td>
+        <td><%= link_to recording.filename, "recordeds/download/#{recording.id}" %></td>
+        <td><%= link_to 'show', recorded_url(recording) %></td>
+        <td><%= link_to 'destroy', recorded_url(recording), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>

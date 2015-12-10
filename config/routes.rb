@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
 
   resources :recordings
+  resources :recordeds, only: [:index, :show, :destroy]
+  get "recordeds/download/:id", to: 'recordeds#download'
   root 'static_pages#index'
   resources :areas, only: [:index, :show]
   resources :stations, only: [:index, :show]

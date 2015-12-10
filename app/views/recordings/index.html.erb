@@ -5,26 +5,23 @@
 <table class="table">
   <thead>
     <tr>
-      <th>area</th>
       <th>station</th>
-      <th>date</th>
-      <th>second</th>
+      <th>start</th>
+      <th>dur(s)</th>
       <th>title</th>
       <th>filename</th>
-      <th colspan="3"></th>
+      <th colspan="2"></th>
     </tr>
   </thead>
 
   <tbody>
     <% @recordings.each do |recording| %>
       <tr>
-        <td><%= recording.area_id %></td>
         <td><%= recording.station_id %></td>
-        <td><%= recording.start_datetime %> - <%= recording.start_datetime + recording.recording_second %></td>
+	<th><%= recording.start_datetime.strftime("%Y/%m/%d %H:%M") %></th>
         <td><%= recording.recording_second %></td>
         <td><%= recording.title %></td>
         <td><%= recording.filename %></td>
-        <td><%= link_to 'show', recording %></td>
         <td><%= link_to 'edit', edit_recording_path(recording) %></td>
         <td><%= link_to 'destroy', recording, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>

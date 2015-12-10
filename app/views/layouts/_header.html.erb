@@ -6,6 +6,7 @@
 	<li class="hidden-xs"><%= link_to :Area, areas_path %></li>
 	<li class="hidden-xs"><%= link_to :Station, stations_path %></li>
 	<li class="hidden-xs"><%= link_to :Recording, recordings_path %></li>
+	<li class="hidden-xs"><%= link_to :Recorded, recordeds_path %></li>
 	<li class="hidden-xs"><%= link_to config_path do %>
 	  <span class="glyphicon glyphicon-cog"></span>
 	<% end %>
@@ -20,7 +21,8 @@
 	    <li><%= link_to :Area, areas_path %></li>
 	    <li><%= link_to :Station, stations_path %></li>
 	    <li><%= link_to :Recording, recordings_path %></li>
-	    <li class="divider"></li>
+	    <li><%= link_to :Recorded, recordeds_path %></li>
+	    <Li class="divider"></li>
 	    <li><%= link_to :Config, config_path %></li>
 	  </ul>
 	</li>

@@ -12,20 +12,6 @@ gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.1.0'
 
-# Select and use suitable libv8 for each OS
-if RUBY_PLATFORM.match(/x86_64-darwin15/)
-  gem 'libv8', '=3.16.14.11'
-elsif RUBY_PLATFORM.match(/amd64-freebsd10/)
-  gem 'libv8', '=3.16.14.7'
-elsif RUBY_PLATFORM.match(/amd64-freebsd9/)
-  gem 'libv8', '=3.16.14.3'
-else
-  gem 'libv8', '~>3.16.14.0'
-end  
-  
-# See https://github.com/rails/execjs#readme for more supported runtimes
-gem 'therubyracer', platforms: :ruby
-
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks

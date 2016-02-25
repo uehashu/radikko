@@ -33,7 +33,7 @@ class ProgramRecorder
       req.delete("Content-Type")
       req.body = "mail=#{mail_address}&pass=#{password}"
       response = https.request(req)
-      unless response.class == Net::HTTPOK
+      unless response.class == Net::HTTPOK || response.class == Net::HTTPFound
         p "にんしょうしっぱい"
         return response
       end
@@ -62,7 +62,7 @@ class ProgramRecorder
       req["Cookie"] = cookie.map{|k,v| "#{k}=#{v}" }.join(";")
       req.body = '\r\n'
       response = https.request(req)
-      unless response.class == Net::HTTPOK
+      unless response.class == Net::HTTPOK || response.class == Net::HTTPFound
         p "にんしょうしっぱい"
         return response
       end
@@ -140,7 +140,7 @@ class ProgramRecorder
     req.body = '\r\n'
     req.body = '\r\n'
     response = https.request(req)
-    unless response.class == Net::HTTPOK
+      unless response.class == Net::HTTPOK || response.class == Net::HTTPFound
       p "auth1_fms につながらない"
       return response
     end
@@ -170,7 +170,7 @@ class ProgramRecorder
     req.body = '\r\n'
     req.body = '\r\n'
     response = https.request(req)
-    unless response.class == Net::HTTPOK
+      unless response.class == Net::HTTPOK || response.class == Net::HTTPFound
       p "auth2_fms につながらない"
       return response
     end

@@ -13,6 +13,8 @@ class RecordingWorker
     filename_full = Configure.where(key: "storedir").first.value + "/" + recording.filename
     ProgramRecorder.record(recording.station_id,
                            recording.recording_second,
-                           filename_full)
+                           filename_full,
+                           album: recording.title,
+                           title: recording.start_datetime)
   end
 end

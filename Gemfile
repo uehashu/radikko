@@ -46,3 +46,4 @@ gem 'sidekiq'
 gem 'sinatra'
 
 gem 'whenever'
+gem 'taglib-ruby'

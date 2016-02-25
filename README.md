@@ -18,6 +18,14 @@ Radikko と連動して redis が起動するようにはなっていないの�
 ### Node.js ###
 javascript エンジン.
 
+### ffmpeg ###
+コンテナ変換か再エンコードに必要.
+もし録音したデータを iTunes で聞きたくて, そこそこ音質を保持してて, しかもファイルサイズが
+小さいほうがいいのであれば, fdk-aac を加えた ffmpeg が必要になる. 
+
+### TagLib ###
+曲名つけたりとか. 
+
 Notice
 ------
 ### wheneverize ###

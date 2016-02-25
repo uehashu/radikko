@@ -4,7 +4,9 @@ require 'net/https'
 require 'uri'
 require 'open-uri'
 require 'base64'
-
+require 'tmpdir'
+require 'securerandom'
+require 'taglib'
 
 class ProgramRecorder
 
@@ -15,6 +17,7 @@ class ProgramRecorder
   # mail_address : string(optional)
   # password : string(optional)
   def self.record(station_id, recording_second, filename,
+                  album: nil, artist: nil, genre: nil, title: nil, 
                   mail_address: nil, password: nil)
     playerurl = "http://radiko.jp/player/swf/player_4.1.0.00.swf"
     
@@ -43,8 +46,6 @@ class ProgramRecorder
         cookie[k] = v
       }
 
-      #return cookie
-      
       # ログインできてるかチェック
       url = "https://radiko.jp/ap/member/webapi/member/login/check"
       uri = URI.parse(url)
@@ -69,6 +70,8 @@ class ProgramRecorder
         
     end
     
+    
+    
     ### step0. 保存用ディレクトリの存在の確認 ###
     path_storedir = Pathname.new(Configure.where(key: "storedir").first.value)
     unless File.exist?(path_storedir.to_s)
@@ -80,7 +83,9 @@ class ProgramRecorder
         return 1
       end
     end
-      
+    
+    
+    
     ### step1. 持ってなかったら player を手に入れる ###
     path_playerfile = path_storedir + "player.swf"
     unless File.exist?(path_playerfile.to_s)
@@ -100,6 +105,8 @@ class ProgramRecorder
     else
       p "player ファイルある"
     end
+    
+    
     
     ### step2. keydata を抽出する ###
     path_keyfile = path_storedir + "authkey.png"
@@ -122,7 +129,9 @@ class ProgramRecorder
       else
       p "authkey.png がある"
     end
-
+    
+    
+    
     ### step3. auth1_fms して paritalkey を抽出する ###
     url = "https://radiko.jp/v2/api/auth1_fms"
     uri = URI.parse(url)
@@ -150,7 +159,9 @@ class ProgramRecorder
     keyoffset = auth1_params["X-Radiko-KeyOffset"].to_i
     partialkey =
       Base64.encode64(File.binread(path_keyfile.to_s, keylength, keyoffset)).chomp
-
+    
+    
+    
     ### step4. auth2_fms する ###
     url = "https://radiko.jp/v2/api/auth2_fms"
     uri = URI.parse(url)
@@ -170,11 +181,13 @@ class ProgramRecorder
     req.body = '\r\n'
     req.body = '\r\n'
     response = https.request(req)
-      unless response.class == Net::HTTPOK || response.class == Net::HTTPFound
+    unless response.class == Net::HTTPOK || response.class == Net::HTTPFound
       p "auth2_fms につながらない"
       return response
     end
-
+    
+    
+    
     ### step5. stream-url を取得する ###
     url = "http://radiko.jp/v2/station/stream_multi/#{station_id}.xml"
     uri = URI.parse(url)
@@ -189,11 +202,18 @@ class ProgramRecorder
     else
       stream_url = stream_urls["0"]
     end
-
+    
+    
+    
     ### step6. stream-url を分割する ###
     url_parts = stream_url.scan(%r!(.+://.+)/(.+)/(.+)!)[0].to_a
     
+    
+    
     ### step7. 録音 ###
+    # 録音のための一時的なファイル名を生成
+    tempfilename = Dir.tmpdir + "/" + SecureRandom.urlsafe_base64(8) + ".flv"
+    
     if Configure.where(key: "path_rtmpdump").first==nil ||
        Configure.where(key: "path_rtmpdump").first.value.empty?
     then
@@ -201,7 +221,6 @@ class ProgramRecorder
     else
       path_rtmpdump = Configure.where(key: "path_rtmpdump").first.value
     end
-    filename_replaced = filename.gsub(/ /,'\ ') # 半角スペースへの対応
     cmd_rtmpdump = path_rtmpdump
     cmd_rtmpdump += " --rtmp #{url_parts[0]}"
     cmd_rtmpdump += " --app #{station_id}/#{url_parts[1]}"
@@ -210,11 +229,12 @@ class ProgramRecorder
     cmd_rtmpdump += " --conn S:\"\" --conn S:\"\" --conn S:\"\" --conn S:#{authtoken}"
     cmd_rtmpdump += " --live"
     cmd_rtmpdump += " --stop #{recording_second}"
-    cmd_rtmpdump += " --flv \'#{filename}\'"
+    cmd_rtmpdump += " --flv \'#{tempfilename}\'"
 
     status = system(cmd_rtmpdump)
 
     if status
+    then
       p "ろくおんせいこう"
     else
       p "ろくおんしっぱい"
@@ -222,6 +242,75 @@ class ProgramRecorder
       p "station_id: #{station_id}"
       p "command..."
       p "#{cmd_rtmpdump}"
+      FileUtils.rm(tempfilename)
+      return 4
+    end
+    
+    
+    
+    ### step8. コンテナ変換もしくは再エンコード ###
+    # ffmpeg のパスを確認
+    if Configure.where(key: "path_ffmpeg").first==nil ||
+       Configure.where(key: "path_ffmpeg").first.value.empty?
+    then
+      path_ffmpeg = "ffmpeg"
+    else
+      path_ffmpeg = Configure.where(key: "path_ffmpeg").first.value
+    end
+
+    # 変換方法を確認(replace_container, aac48, aac128, fdk_aac)
+    if Configure.where(key: "translate_type").first==nil ||
+       Configure.where(key: "translate_type").first.value.empty?
+    then
+      translate_type = "replace_container"
+    else
+      translate_type = Configure.where(key: "translate_type").first.value
+    end
+
+    filename_replaced = filename.gsub(/ /,'\ ') # 半角スペースへの対応
+    cmd_ffmpeg = path_ffmpeg
+    cmd_ffmpeg += " -y -i #{tempfilename}"
+    cmd_ffmpeg += " -f mp4 -vn"
+
+    case translate_type
+    when "replace_container" then
+      cmd_ffmpeg += " -c:a copy"
+    when "aac48" then
+      cmd_ffmpeg += " -c:a aac -strict -2 -b:a 48k"
+    when "aac128" then
+      cmd_ffmpeg += " -c:a aac -strict -2 -b:a 128k"
+    when "fdk_aac" then
+      cmd_ffmpeg += " -c:a libfdk_aac -b:a 48k"
+    else
+      cmd_ffmpeg += " -c:a copy"
+    end
+
+    cmd_ffmpeg += " #{filename_replaced}"
+
+    # 変換
+    status = system(cmd_ffmpeg)
+
+    if status
+    then
+      p "へんかんせいこう"
+    else
+      p "へんかんしっぱい"
+      return 5
+    end
+
+    # 一時ファイルを削除
+    FileUtils.rm(tempfilename)
+    
+
+
+    ### step9. タグを編集 ###
+    TagLib::MP4::File.open(filename) do |file|
+      tag = file.tag
+      tag.album = "#{album}" if album
+      tag.artist = "#{artist}" if artist
+      tag.genre = "#{genre}" if genre
+      tag.title = "#{title}" if title
+      file.save
     end
   end
 end

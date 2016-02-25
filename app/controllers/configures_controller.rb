@@ -5,6 +5,7 @@ class ConfiguresController < ApplicationController
     @path_swfextract = Configure.find_or_create_by(key: "path_swfextract").value
     @path_ffmpeg = Configure.find_or_create_by(key: "path_ffmpeg").value
     @storedir = Configure.find_or_create_by(key: "storedir").value
+    @translate_type = Configure.find_or_create_by(key: "translate_type").value
   end
   
   
@@ -35,12 +36,17 @@ class ConfiguresController < ApplicationController
           @error = "Failed to update configure."
         end
       end
-
+      
+      # update translate_type
+      translate_type_record = Configure.find_or_create_by(key: "translate_type")
+      translate_type_record.update_attributes(value: params[:translate_type])
+      
       # re-render
       @path_rtmpdump = Configure.find_or_create_by(key: "path_rtmpdump").value
       @path_swfextract = Configure.find_or_create_by(key: "path_swfextract").value
       @path_ffmpeg = Configure.find_or_create_by(key: "path_ffmpeg").value
       @storedir = Configure.find_or_create_by(key: "storedir").value
+      @translate_type = Configure.find_or_create_by(key: "translate_type").value
       render :edit
 
     elsif params[:commit] == "cancel"

@@ -33,6 +33,17 @@
   </div>
   
   <div class="form-group">
+    <%= label_tag :translate_type, "encoding type", class: "control-label" %>
+    <%= select_tag :translate_type,
+    options_for_select([["コンテナ入れ替えのみ","replace_container"],
+			["aac 48kbps に変換","aac48"],
+			["aac 128kbps に変換","aac128"],
+			["fdk-aac 48kbps に変換","fdk_aac"]],
+		       selected: @translate_type)
+    %>
+  </div>
+  
+  <div class="form-group">
     <%= submit_tag :change, class: "btn btn-primary" %>
     <%= submit_tag :cancel, class: "btn btn-default" %>
   </div>

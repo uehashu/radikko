@@ -15,7 +15,7 @@ class ProgramRecorder
   # mail_address : string(optional)
   # password : string(optional)
   def self.record(station_id, recording_second, filename,
-                  mail_address=nil, password=nil)
+                  mail_address: nil, password: nil)
     playerurl = "http://radiko.jp/player/swf/player_4.1.0.00.swf"
     
     # まずプレミアムでログインできるかどうかを試してみる.

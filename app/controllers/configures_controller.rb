@@ -4,8 +4,8 @@ class ConfiguresController < ApplicationController
     @path_rtmpdump = Configure.find_or_create_by(key: "path_rtmpdump").value
     @path_swfextract = Configure.find_or_create_by(key: "path_swfextract").value
     @path_ffmpeg = Configure.find_or_create_by(key: "path_ffmpeg").value
+    @path_mp4box = Configure.find_or_create_by(key: "path_mp4box").value
     @storedir = Configure.find_or_create_by(key: "storedir").value
-    @translate_type = Configure.find_or_create_by(key: "translate_type").value
   end
   
   
@@ -18,12 +18,16 @@ class ConfiguresController < ApplicationController
       path_rtmpdump_record.update_attributes(value: params[:path_rtmpdump])
 
       # update path_swfextract
-      path_rtmpdump_record = Configure.find_or_create_by(key: "path_swfextract")
-      path_rtmpdump_record.update_attributes(value: params[:path_swfextract])
+      path_swfextract_record = Configure.find_or_create_by(key: "path_swfextract")
+      path_swfextract_record.update_attributes(value: params[:path_swfextract])
 
       # update path_ffmpeg
-      path_rtmpdump_record = Configure.find_or_create_by(key: "path_ffmpeg")
-      path_rtmpdump_record.update_attributes(value: params[:path_ffmpeg])
+      path_ffmpeg_record = Configure.find_or_create_by(key: "path_ffmpeg")
+      path_ffmpeg_record.update_attributes(value: params[:path_ffmpeg])
+      
+      # update path_mp4box
+      path_mp4box_record = Configure.find_or_create_by(key: "path_mp4box")
+      path_mp4box_record.update_attributes(value: params[:path_mp4box])
       
       # update storedir
       storedir_record = Configure.find_or_create_by(key: "storedir")
@@ -37,16 +41,12 @@ class ConfiguresController < ApplicationController
         end
       end
       
-      # update translate_type
-      translate_type_record = Configure.find_or_create_by(key: "translate_type")
-      translate_type_record.update_attributes(value: params[:translate_type])
-      
       # re-render
       @path_rtmpdump = Configure.find_or_create_by(key: "path_rtmpdump").value
       @path_swfextract = Configure.find_or_create_by(key: "path_swfextract").value
       @path_ffmpeg = Configure.find_or_create_by(key: "path_ffmpeg").value
+      @path_mp4box = Configure.find_or_create_by(key: "path_mp4box").value
       @storedir = Configure.find_or_create_by(key: "storedir").value
-      @translate_type = Configure.find_or_create_by(key: "translate_type").value
       render :edit
 
     elsif params[:commit] == "cancel"

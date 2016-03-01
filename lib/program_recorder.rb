@@ -113,6 +113,7 @@ class ProgramRecorder
     unless File.exist?(path_keyfile.to_s)
       p "auhtykey.png がない"
       if Configure.where(key: "path_swfextract").first==nil ||
+         Configure.where(key: "path_swfextract").first.value==nil ||
          Configure.where(key: "path_swfextract").first.value.empty?
       then
         path_swfextract = "swfextract"
@@ -212,9 +213,11 @@ class ProgramRecorder
     
     ### step7. 録音 ###
     # 録音のための一時的なファイル名を生成
-    tempfilename = Dir.tmpdir + "/" + SecureRandom.urlsafe_base64(8) + ".flv"
+    tempfile_base = Dir.tmpdir + "/" + SecureRandom.urlsafe_base64(8)
+    tempfile_flv = tempfile_base + ".flv"
     
     if Configure.where(key: "path_rtmpdump").first==nil ||
+       Configure.where(key: "path_rtmpdump").first.value==nil ||
        Configure.where(key: "path_rtmpdump").first.value.empty?
     then
       path_rtmpdump = "rtmpdump"
@@ -229,7 +232,7 @@ class ProgramRecorder
     cmd_rtmpdump += " --conn S:\"\" --conn S:\"\" --conn S:\"\" --conn S:#{authtoken}"
     cmd_rtmpdump += " --live"
     cmd_rtmpdump += " --stop #{recording_second}"
-    cmd_rtmpdump += " --flv \'#{tempfilename}\'"
+    cmd_rtmpdump += " --flv \'#{tempfile_flv}\'"
 
     status = system(cmd_rtmpdump)
 
@@ -242,15 +245,16 @@ class ProgramRecorder
       p "station_id: #{station_id}"
       p "command..."
       p "#{cmd_rtmpdump}"
-      FileUtils.rm(tempfilename)
+      FileUtils.rm(tempfile_flv)
       return 4
     end
     
     
     
-    ### step8. コンテナ変換もしくは再エンコード ###
+    ### step8. 音声部分を抽出 ###
     # ffmpeg のパスを確認
     if Configure.where(key: "path_ffmpeg").first==nil ||
+       Configure.where(key: "path_ffmpeg").first.value==nil ||
        Configure.where(key: "path_ffmpeg").first.value.empty?
     then
       path_ffmpeg = "ffmpeg"
@@ -258,53 +262,68 @@ class ProgramRecorder
       path_ffmpeg = Configure.where(key: "path_ffmpeg").first.value
     end
 
-    # 変換方法を確認(replace_container, aac48, aac128, fdk_aac)
-    if Configure.where(key: "translate_type").first==nil ||
-       Configure.where(key: "translate_type").first.value.empty?
-    then
-      translate_type = "replace_container"
-    else
-      translate_type = Configure.where(key: "translate_type").first.value
-    end
-
-    filename_replaced = filename.gsub(/ /,'\ ') # 半角スペースへの対応
+    # 一時ファイル名の生成
+    tempfile_aac = tempfile_base + ".aac"
+    
+    # 抽出
     cmd_ffmpeg = path_ffmpeg
-    cmd_ffmpeg += " -y -i #{tempfilename}"
-    cmd_ffmpeg += " -f mp4 -vn"
-
-    case translate_type
-    when "replace_container" then
-      cmd_ffmpeg += " -c:a copy"
-    when "aac48" then
-      cmd_ffmpeg += " -c:a aac -strict -2 -b:a 48k"
-    when "aac128" then
-      cmd_ffmpeg += " -c:a aac -strict -2 -b:a 128k"
-    when "fdk_aac" then
-      cmd_ffmpeg += " -c:a libfdk_aac -b:a 48k"
-    else
-      cmd_ffmpeg += " -c:a copy"
-    end
-
-    cmd_ffmpeg += " #{filename_replaced}"
-
-    # 変換
+    cmd_ffmpeg += " -y -i #{tempfile_flv}"
+    cmd_ffmpeg += " -f adts -vn -c:a copy #{tempfile_aac}"
+    
+    # 抽出
     status = system(cmd_ffmpeg)
-
+    
     if status
     then
-      p "へんかんせいこう"
+      p "おんせいちゅうしゅつせいこう"
     else
-      p "へんかんしっぱい"
+      p "おんせいちゅうしゅつしっぱい"
       return 5
     end
 
     # 一時ファイルを削除
-    FileUtils.rm(tempfilename)
+    FileUtils.rm(tempfile_flv)
+
     
+    
+    ### step9. コンテナ変換 ###
+    # mp4box のパスを確認
+    if Configure.where(key: "path_mp4box").first==nil ||
+       Configure.where(key: "path_mp4box").first.value==nil ||
+       Configure.where(key: "path_mp4box").first.value.empty?
+    then
+      path_mp4box = "mp4box"
+    else
+      path_mp4box = Configure.where(key: "path_mp4box").first.value
+    end
 
+    p path_mp4box
+    
+    # コンテナを入れ替え
+    filename_replaced = filename.gsub(/ /,'\ ') # 半角スペースへの対応
+    #p filename_replaced
+    cmd_mp4box = path_mp4box
+    cmd_mp4box += " -add #{tempfile_aac} #{filename_replaced} -sbr"
+    #cmd_mp4box += " -add #{tempfile_aac} #{filename} -sbr"
+    p cmd_mp4box
+    
+    status = system(cmd_mp4box)
+    
+    if status
+    then
+      p "こんてないれかえせいこう"
+    else
+      p "こんてないれかえしっぱい"
+      return 6
+    end
 
-    ### step9. タグを編集 ###
-    TagLib::MP4::File.open(filename) do |file|
+    # 一時ファイルを削除
+    FileUtils.rm(tempfile_aac)
+    
+    
+    
+    ### step10. タグを編集 ###
+    TagLib::MP4::File.open(filename_replaced) do |file|
       tag = file.tag
       tag.album = "#{album}" if album
       tag.artist = "#{artist}" if artist

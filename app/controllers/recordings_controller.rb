@@ -25,7 +25,7 @@ class RecordingsController < ApplicationController
       program_params[:title] = program.title
       program_params[:filename] = program.start_date.strftime('%Y%m%d%H%M') + "_" +
                                   program.title.gsub(/:|;|>|<|"|\/|\?|\\|\*|\|/,"_") +
-                                  ".flv"
+                                  ".m4a"
       @recording = Recording.new(program_params)
     end
   end

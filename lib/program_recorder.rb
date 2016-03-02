@@ -4,7 +4,9 @@ require 'net/https'
 require 'uri'
 require 'open-uri'
 require 'base64'
-
+require 'tmpdir'
+require 'securerandom'
+require 'taglib'
 
 class ProgramRecorder
 
@@ -15,6 +17,7 @@ class ProgramRecorder
   # mail_address : string(optional)
   # password : string(optional)
   def self.record(station_id, recording_second, filename,
+                  album: nil, artist: nil, genre: nil, title: nil, 
                   mail_address: nil, password: nil)
     playerurl = "http://radiko.jp/player/swf/player_4.1.0.00.swf"
     
@@ -43,8 +46,6 @@ class ProgramRecorder
         cookie[k] = v
       }
 
-      #return cookie
-      
       # ログインできてるかチェック
       url = "https://radiko.jp/ap/member/webapi/member/login/check"
       uri = URI.parse(url)
@@ -69,6 +70,8 @@ class ProgramRecorder
         
     end
     
+    
+    
     ### step0. 保存用ディレクトリの存在の確認 ###
     path_storedir = Pathname.new(Configure.where(key: "storedir").first.value)
     unless File.exist?(path_storedir.to_s)
@@ -80,7 +83,9 @@ class ProgramRecorder
         return 1
       end
     end
-      
+    
+    
+    
     ### step1. 持ってなかったら player を手に入れる ###
     path_playerfile = path_storedir + "player.swf"
     unless File.exist?(path_playerfile.to_s)
@@ -101,11 +106,14 @@ class ProgramRecorder
       p "player ファイルある"
     end
     
+    
+    
     ### step2. keydata を抽出する ###
     path_keyfile = path_storedir + "authkey.png"
     unless File.exist?(path_keyfile.to_s)
       p "auhtykey.png がない"
       if Configure.where(key: "path_swfextract").first==nil ||
+         Configure.where(key: "path_swfextract").first.value==nil ||
          Configure.where(key: "path_swfextract").first.value.empty?
       then
         path_swfextract = "swfextract"
@@ -122,7 +130,9 @@ class ProgramRecorder
       else
       p "authkey.png がある"
     end
-
+    
+    
+    
     ### step3. auth1_fms して paritalkey を抽出する ###
     url = "https://radiko.jp/v2/api/auth1_fms"
     uri = URI.parse(url)
@@ -150,7 +160,9 @@ class ProgramRecorder
     keyoffset = auth1_params["X-Radiko-KeyOffset"].to_i
     partialkey =
       Base64.encode64(File.binread(path_keyfile.to_s, keylength, keyoffset)).chomp
-
+    
+    
+    
     ### step4. auth2_fms する ###
     url = "https://radiko.jp/v2/api/auth2_fms"
     uri = URI.parse(url)
@@ -170,11 +182,13 @@ class ProgramRecorder
     req.body = '\r\n'
     req.body = '\r\n'
     response = https.request(req)
-      unless response.class == Net::HTTPOK || response.class == Net::HTTPFound
+    unless response.class == Net::HTTPOK || response.class == Net::HTTPFound
       p "auth2_fms につながらない"
       return response
     end
-
+    
+    
+    
     ### step5. stream-url を取得する ###
     url = "http://radiko.jp/v2/station/stream_multi/#{station_id}.xml"
     uri = URI.parse(url)
@@ -189,19 +203,27 @@ class ProgramRecorder
     else
       stream_url = stream_urls["0"]
     end
-
+    
+    
+    
     ### step6. stream-url を分割する ###
     url_parts = stream_url.scan(%r!(.+://.+)/(.+)/(.+)!)[0].to_a
     
+    
+    
     ### step7. 録音 ###
+    # 録音のための一時的なファイル名を生成
+    tempfile_base = Dir.tmpdir + "/" + SecureRandom.urlsafe_base64(8)
+    tempfile_flv = tempfile_base + ".flv"
+    
     if Configure.where(key: "path_rtmpdump").first==nil ||
+       Configure.where(key: "path_rtmpdump").first.value==nil ||
        Configure.where(key: "path_rtmpdump").first.value.empty?
     then
       path_rtmpdump = "rtmpdump"
     else
       path_rtmpdump = Configure.where(key: "path_rtmpdump").first.value
     end
-    filename_replaced = filename.gsub(/ /,'\ ') # 半角スペースへの対応
     cmd_rtmpdump = path_rtmpdump
     cmd_rtmpdump += " --rtmp #{url_parts[0]}"
     cmd_rtmpdump += " --app #{station_id}/#{url_parts[1]}"
@@ -210,11 +232,12 @@ class ProgramRecorder
     cmd_rtmpdump += " --conn S:\"\" --conn S:\"\" --conn S:\"\" --conn S:#{authtoken}"
     cmd_rtmpdump += " --live"
     cmd_rtmpdump += " --stop #{recording_second}"
-    cmd_rtmpdump += " --flv \'#{filename}\'"
+    cmd_rtmpdump += " --flv \'#{tempfile_flv}\'"
 
     status = system(cmd_rtmpdump)
 
     if status
+    then
       p "ろくおんせいこう"
     else
       p "ろくおんしっぱい"
@@ -222,6 +245,91 @@ class ProgramRecorder
       p "station_id: #{station_id}"
       p "command..."
       p "#{cmd_rtmpdump}"
+      FileUtils.rm(tempfile_flv)
+      return 4
+    end
+    
+    
+    
+    ### step8. 音声部分を抽出 ###
+    # ffmpeg のパスを確認
+    if Configure.where(key: "path_ffmpeg").first==nil ||
+       Configure.where(key: "path_ffmpeg").first.value==nil ||
+       Configure.where(key: "path_ffmpeg").first.value.empty?
+    then
+      path_ffmpeg = "ffmpeg"
+    else
+      path_ffmpeg = Configure.where(key: "path_ffmpeg").first.value
+    end
+
+    # 一時ファイル名の生成
+    tempfile_aac = tempfile_base + ".aac"
+    
+    # 抽出
+    cmd_ffmpeg = path_ffmpeg
+    cmd_ffmpeg += " -y -i #{tempfile_flv}"
+    cmd_ffmpeg += " -f adts -vn -c:a copy #{tempfile_aac}"
+    
+    # 抽出
+    status = system(cmd_ffmpeg)
+    
+    if status
+    then
+      p "おんせいちゅうしゅつせいこう"
+    else
+      p "おんせいちゅうしゅつしっぱい"
+      return 5
+    end
+
+    # 一時ファイルを削除
+    FileUtils.rm(tempfile_flv)
+
+    
+    
+    ### step9. コンテナ変換 ###
+    # mp4box のパスを確認
+    if Configure.where(key: "path_mp4box").first==nil ||
+       Configure.where(key: "path_mp4box").first.value==nil ||
+       Configure.where(key: "path_mp4box").first.value.empty?
+    then
+      path_mp4box = "mp4box"
+    else
+      path_mp4box = Configure.where(key: "path_mp4box").first.value
+    end
+
+    p path_mp4box
+    
+    # コンテナを入れ替え
+    filename_replaced = filename.gsub(/ /,'\ ') # 半角スペースへの対応
+    #p filename_replaced
+    cmd_mp4box = path_mp4box
+    cmd_mp4box += " -add #{tempfile_aac} #{filename_replaced} -sbr"
+    #cmd_mp4box += " -add #{tempfile_aac} #{filename} -sbr"
+    p cmd_mp4box
+    
+    status = system(cmd_mp4box)
+    
+    if status
+    then
+      p "こんてないれかえせいこう"
+    else
+      p "こんてないれかえしっぱい"
+      return 6
+    end
+
+    # 一時ファイルを削除
+    FileUtils.rm(tempfile_aac)
+    
+    
+    
+    ### step10. タグを編集 ###
+    TagLib::MP4::File.open(filename_replaced) do |file|
+      tag = file.tag
+      tag.album = "#{album}" if album
+      tag.artist = "#{artist}" if artist
+      tag.genre = "#{genre}" if genre
+      tag.title = "#{title}" if title
+      file.save
     end
   end
 end

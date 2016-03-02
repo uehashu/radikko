@@ -18,6 +18,15 @@ Radikko と連動して redis が起動するようにはなっていないの�
 ### Node.js ###
 javascript エンジン.
 
+### ffmpeg ###
+録音結果からの音声抽出に必要.
+
+### MP4Box ###
+コンテナ入れ替えに必要. 
+
+### TagLib ###
+曲名つけたりとか. 
+
 Notice
 ------
 ### wheneverize ###

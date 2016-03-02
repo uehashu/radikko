@@ -26,6 +26,12 @@
   </div>
   
   <div class="form-group">
+    <%= label_tag :path_mp4box, "mp4box path", class: "control-label" %>
+    <%= text_field_tag :path_mp4box, @path_mp4box,
+    class: "form-control" %>
+  </div>
+  
+  <div class="form-group">
     <%= label_tag :storedir, "basic directory to store recorded media",
     class: "control-label" %>
     <%= text_field_tag :storedir, @storedir,

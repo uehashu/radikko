@@ -1,0 +1,24 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th class="col-sm-1 col-xs-4">start</th>
+      <th class="col-sm-1 col-xs-2">dur(s)</th>
+      <th class="col-sm-4 col-xs-4">title</th>
+      <th class="col-sm-4 hidden-xs">performers</th>
+      <th class="col-sm-1 col-xs-2"></th>
+    </tr>
+  </thead>
+  
+  <tbody>
+    <% @programs.each do |program| %>
+      <tr id=<%= program.id %>>
+	<td class="col-xs-4"><%= program.start_date.strftime('%Y/%m/%d %H:%M') %></td>
+	<td class="col-xs-2"><%= program.duration_sec %></td>
+	<td class="col-xs-4"><%= program.title %></td>
+	<td class="hidden-xs"><%= program.performers %></td>
+	<td class="col-xs-2"><%= link_to 'rec', new_recording_path(program_id: program.id) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+

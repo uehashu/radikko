@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  get 'programs', to: 'programs#search'
+  
   resources :recordings
   resources :recordeds, only: [:index, :show, :destroy]
   get "recordeds/download/:id", to: 'recordeds#download'

@@ -1,5 +1,5 @@
-class ProgramController < ApplicationController
-  def index
+class ProgramsController < ApplicationController
+  def search
     @programs = Program.search(params[:search_word])
   end
 

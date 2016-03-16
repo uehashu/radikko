@@ -8,7 +8,7 @@ class Program < ActiveRecord::Base
            "%" + search_word + "%",
            "%" + search_word + "%")
     else
-      all
+      nil
     end
   end
 end

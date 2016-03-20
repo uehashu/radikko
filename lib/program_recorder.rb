@@ -325,10 +325,10 @@ class ProgramRecorder
     ### step10. タグを編集 ###
     TagLib::MP4::File.open(filename_replaced) do |file|
       tag = file.tag
-      tag.album = "#{album}" if album
-      tag.artist = "#{artist}" if artist
-      tag.genre = "#{genre}" if genre
-      tag.title = "#{title}" if title
+      tag.album = "#{album}" if album.present?
+      tag.artist = "#{artist}" if artist.present?
+      tag.genre = "#{genre}" if genre.present?
+      tag.title = "#{title}" if title.present?
       file.save
     end
   end

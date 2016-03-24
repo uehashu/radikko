@@ -6,7 +6,7 @@
       <%= area_id.to_s %>
       <% programs_each_area.each do |program| %>
 	<%= content_tag(:div, {class: 'normal-box', style: "height: #{program.duration_sec/20}px"}) do %>
-	  <%= program.title %><br>
+	  <%= link_to program.title, new_recording_path(program_id: program.id) %><br>
 	  start: <%= program.start_date.strftime("%H:%M") %><br>
 	  end: <%= program.end_date.strftime("%H:%M") %><br>
 	  dulation: <%= program.duration_sec %><br>

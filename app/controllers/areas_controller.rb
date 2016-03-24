@@ -4,8 +4,15 @@ class AreasController < ApplicationController
   def index
     @areas = Area.all
   end
-
+  
   def show
+    monday = Date.today.in_time_zone.beginning_of_week
+    @programs = Hash.new
+    @stations.each do |station|
+      station_id = station.station_id
+      @programs[station_id] =
+        Program.where(station_id: station_id).where("start_date >= ?", monday).order("start_date")
+    end
   end
   
   

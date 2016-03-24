@@ -16,7 +16,7 @@ class StationsController < ApplicationController
 
   def set_item
     @today = Date.today.in_time_zone
-    monday = @today.beginning_of_week
+    @monday = @today.beginning_of_week
     @week = Array.new(7);
     for i in 0..6 do
       @week[i] = (monday + i.day)

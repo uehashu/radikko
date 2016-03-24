@@ -1,21 +1,18 @@
 <h2><%= @area_name_kana %></h2>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>station_id</th>
-      <th>station_name</th>
-      <th>station_name_ascii</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @stations.each do |station| %>
-      <tr>
-	<td><%= station.area_id %></td>
-	<td><%= link_to station.station_name, station_path(station) %></td>
-	<td><%= station.station_name_ascii %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div class="multiple-items">
+  <% @programs.each do |area_id, programs_each_area| %>
+    <div>
+      <%= area_id.to_s %>
+      <% programs_each_area.each do |program| %>
+	<%= content_tag(:div, {class: 'normal-box', style: "height: #{program.duration_sec/20}px"}) do %>
+	  <%= program.title %><br>
+	  start: <%= program.start_date.strftime("%H:%M") %><br>
+	  end: <%= program.end_date.strftime("%H:%M") %><br>
+	  dulation: <%= program.duration_sec %><br>
+	  height: <%= program.duration_sec/20 %>
+	<% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

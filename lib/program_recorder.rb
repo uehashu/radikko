@@ -323,7 +323,7 @@ class ProgramRecorder
     
     
     ### step10. タグを編集 ###
-    TagLib::MP4::File.open(filename_replaced) do |file|
+    TagLib::MP4::File.open(filename) do |file|
       tag = file.tag
       tag.album = "#{album}" if album.present?
       tag.artist = "#{artist}" if artist.present?

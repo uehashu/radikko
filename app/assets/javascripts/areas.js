@@ -2,7 +2,9 @@
 // All this logic will automatically be available in application.js.
 // You can use CoffeeScript in this file: http://coffeescript.org/
 
-$(window).load(function(){
+var slicktabling;
+
+slicktabling = function(){
     $('.multiple-items').slick({
 	dots: true,
 	infinite: true,
@@ -11,4 +13,7 @@ $(window).load(function(){
 	draggable: true,
 	arrows: true
     });
-});
+};
+
+$(document).ready(slicktabling);
+$(document).on('page:load', slicktabling);

@@ -1,3 +1,11 @@
 // Place all the styles related to the areas controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+div.normal-box {
+    box-sizing: border-box;
+    width: 200px;
+    border: solid 2px grey;
+    border-bottom: none;
+    overflow: hidden;
+}

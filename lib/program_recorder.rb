@@ -120,7 +120,7 @@ class ProgramRecorder
       else
         path_swfextract = Configure.where(key: "path_swfextract").first.value
       end
-      if system("#{path_swfextract} -b 14 #{path_playerfile} -o #{path_keyfile}")
+      if system("#{path_swfextract} -b 12 #{path_playerfile} -o #{path_keyfile}")
       then
         p "authkey.png つくった"
       else

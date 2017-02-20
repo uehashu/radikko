@@ -19,7 +19,7 @@ class ProgramRecorder
   def self.record(station_id, recording_second, filename,
                   album: nil, artist: nil, genre: nil, title: nil, 
                   mail_address: nil, password: nil)
-    playerurl = "http://radiko.jp/player/swf/player_4.1.0.00.swf"
+    playerurl = "http://radiko.jp/apps/js/flash/myplayer-release.swf"
     
     # まずプレミアムでログインできるかどうかを試してみる.
     if mail_address == nil || password == nil
@@ -56,8 +56,8 @@ class ProgramRecorder
       req.delete("Content-Type")
       req["pragma"] = "no-cache"
       req["Cahce-Control"] = "no-cache"
-      req["X-Radiko-App"] = "pc_1"
-      req["X-Radiko-App-Version"] = "2.0.1"
+      req["X-Radiko-App"] = "pc_ts"
+      req["X-Radiko-App-Version"] = "4.0.1"
       req["X-Radiko-User"] = "test-stream"
       req["X-Radiko-Device"] = "pc"
       req["Cookie"] = cookie.map{|k,v| "#{k}=#{v}" }.join(";")
@@ -142,8 +142,8 @@ class ProgramRecorder
     req = Net::HTTP::Post.new(uri.request_uri)
     req.delete("Content-Type")
     req["pragma"] = "no-cache"
-    req["X-Radiko-App"] = "pc_1"
-    req["X-Radiko-App-Version"] = "2.0.1"
+    req["X-Radiko-App"] = "pc_ts"
+    req["X-Radiko-App-Version"] = "4.0.1"
     req["X-Radiko-User"] = "test-stream"
     req["X-Radiko-Device"] = "pc"
     req["Cookie"] = cookie.map{|k,v| "#{k}=#{v}" }.join(";") if premium
@@ -172,8 +172,8 @@ class ProgramRecorder
     req = Net::HTTP::Post.new(uri.request_uri)
     req.delete("Content-Type")
     req["pragma"] = "no-cache"
-    req["X-Radiko-App"] = "pc_1"
-    req["X-Radiko-App-Version"] = "2.0.1"
+    req["X-Radiko-App"] = "pc_ts"
+    req["X-Radiko-App-Version"] = "4.0.0"
     req["X-Radiko-User"] = "test-stream"
     req["X-Radiko-Device"] = "pc"
     req["X-Radiko-Authtoken"] = authtoken

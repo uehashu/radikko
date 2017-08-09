@@ -22,16 +22,16 @@ javascript エンジン.
 録音結果からの音声抽出に必要.
 
 ### MP4Box ###
-コンテナ入れ替えに必要. 
+コンテナ入れ替えに必要.
 
 ### TagLib ###
-曲名つけたりとか. 
+曲名つけたりとか.
 
 Notice
 ------
 ### wheneverize ###
 番組表を自動的に更新するために, インストールする際に whenever を用いて crontab を 自動生成する.
 
-```sudo -u www bundle whenever -w```
+```sudo -u www bundle exec whenever -w```
 
 を1回実行すればおっけー.

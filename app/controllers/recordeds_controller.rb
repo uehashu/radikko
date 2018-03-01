@@ -3,7 +3,7 @@ class RecordedsController < ApplicationController
 
   # GET /recorded
   def index
-    @recordings = Recording.where(is_recorded: true).order(:start_datetime).reverse_order
+    @recordings = Recording.where(is_recorded: true).order(:start_datetime).reverse_order.page(params[:page]).per(20)
   end
 
   def show

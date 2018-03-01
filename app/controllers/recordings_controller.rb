@@ -4,7 +4,7 @@ class RecordingsController < ApplicationController
   # GET /recordings
   # GET /recordings.json
   def index
-    @recordings = Recording.where(is_recorded: false).order(:start_datetime).reverse_order
+    @recordings = Recording.where(is_recorded: false).order(:start_datetime).reverse_order.page(params[:page]).per(20)
   end
 
   # GET /recordings/1

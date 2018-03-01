@@ -3,12 +3,12 @@ class RecordedsController < ApplicationController
 
   # GET /recorded
   def index
-    @recordings = Recording.where(is_recorded: true)
+    @recordings = Recording.where(is_recorded: true).order(:start_datetime).reverse_order
   end
 
   def show
   end
-  
+
   # DELETE /recorded/1
   def destroy
     @recording.destroy
@@ -24,10 +24,10 @@ class RecordedsController < ApplicationController
     file_path = Configure.where(key: "storedir").first.value + "/" + @recording.filename
     send_file(file_path, filename: file_name)
   end
-  
+
   private
   def set_recording
     @recording = Recording.find(params[:id])
   end
-    
+
 end

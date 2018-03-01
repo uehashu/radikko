@@ -47,3 +47,6 @@ gem 'sinatra'
 
 gem 'whenever'
 gem 'taglib-ruby'
+
+gem 'kaminari'
+gem 'kaminari-bootstrap'

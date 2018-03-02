@@ -20,3 +20,6 @@
 /vendor/cache
 
 /public/assets
+
+# Ignore db schema
+/db/schema.rb

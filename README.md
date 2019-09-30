@@ -33,6 +33,9 @@ FreeBSD であれば，ports を使って audio/taglib で入手できる．
 インストールするのに使う．
 FreeBSD であれば，ports を使って sysutls/rubygem-bundler で入手できる．
 
+### yarn ###
+development 環境のときに必要？
+
 
 How to Use
 ----------

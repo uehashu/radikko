@@ -40,6 +40,6 @@ How to Use
 1. 上述の依存パッケージを導入しておく．
 2. `git clone` してくる．
 3. `bundle install` で gem を持ってくる．
-4. db を作る．`sudo -u www bundle exec rake db:migrate` で．production 環境であれば，`sudo -u www bundle exec rake db:migrate RAILS_ENV=production`で．
-5. エリア ID を格納し，初回のクロールを行う．`sudo -u www bundle exec rake db:seed` もしくは `sudo -u www bundle exec rake db:seed RAILS_ENV=production`
+4. db を作る．`sudo -u www bundle exec rails db:migrate` で．production 環境であれば，`sudo -u www bundle exec rails db:migrate RAILS_ENV=production`で．
+5. エリア ID を格納し，初回のクロールを行う．`sudo -u www bundle exec rails db:seed` もしくは `sudo -u www bundle exec rails db:seed RAILS_ENV=production`
 6. 番組表を自動的に更新するために，インストールする際に whenever を用いて crontab を 自動生成する．`sudo -u www bundle exec whenever -w` で．

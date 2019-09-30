@@ -1,4 +1,4 @@
-class Program < ActiveRecord::Base
+class Program < ApplicationRecord
   
   # searching method
   def self.search(search_word = nil)

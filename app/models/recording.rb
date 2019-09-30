@@ -1,2 +1,2 @@
-class Recording < ActiveRecord::Base
+class Recording < ApplicationRecord
 end

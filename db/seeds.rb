@@ -8,8 +8,8 @@
 
 
 require "csv"
-#require "station_poller"
-#require "program_poller"
+require "station_poller"
+require "program_poller"
 
 CSV.foreach("db/area.csv") do |row|
   unless Area.exists?(area_id: row[0])

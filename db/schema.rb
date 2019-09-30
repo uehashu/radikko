@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -17,18 +16,16 @@ ActiveRecord::Schema.define(version: 20151114214533) do
     t.string "area_id"
     t.string "area_name"
     t.string "area_name_kana"
+    t.index ["area_id"], name: "index_areas_on_area_id", unique: true
   end
-
-  add_index "areas", ["area_id"], name: "index_areas_on_area_id", unique: true
 
   create_table "configures", force: :cascade do |t|
     t.string   "key"
     t.string   "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_configures_on_key", unique: true
   end
-
-  add_index "configures", ["key"], name: "index_configures_on_key", unique: true
 
   create_table "programs", force: :cascade do |t|
     t.string   "station_id"

@@ -2,9 +2,10 @@
 # 録音をスケジュールによって開始するためのクラス.
 class RecordingWorker
   include Sidekiq::Worker
+  require 'program_recorder'
 
   sidekiq_options retry: false
-  
+
   def perform(recording_id)
     Rails.logger.info("pulsed")
     recording = Recording.find(recording_id)

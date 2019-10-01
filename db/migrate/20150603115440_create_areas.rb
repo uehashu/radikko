@@ -1,4 +1,4 @@
-class CreateAreas < ActiveRecord::Migration
+class CreateAreas < ActiveRecord::Migration[4.2]
   def change
     create_table :areas, id: false do |t|
       t.string :area_id

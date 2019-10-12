@@ -17,61 +17,13 @@ class ProgramRecorder
   # mail_address : string(optional)
   # password : string(optional)
   def self.record(station_id, recording_second, filename,
-                  album: nil, artist: nil, genre: nil, title: nil, 
+                  album: nil, artist: nil, genre: nil, title: nil,
                   mail_address: nil, password: nil)
     playerurl = "http://radiko.jp/apps/js/flash/myplayer-release.swf"
-    
-    # まずプレミアムでログインできるかどうかを試してみる.
-    if mail_address == nil || password == nil
-    then
-      premium = false
-    else
-      premium = true
-      url = "https://radiko.jp/ap/member/login/login"
-      uri = URI.parse(url)
-      https = Net::HTTP.new(uri.host, uri.port)
-      https.use_ssl = true
-      https.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      req = Net::HTTP::Post.new(uri.request_uri)
-      req.delete("Content-Type")
-      req.body = "mail=#{mail_address}&pass=#{password}"
-      response = https.request(req)
-      unless response.class == Net::HTTPOK || response.class == Net::HTTPFound
-        p "にんしょうしっぱい"
-        return response
-      end
-      cookie={}
-      response.get_fields('Set-Cookie').each{|str|
-        k,v = str[0...str.index(';')].split('=')
-        cookie[k] = v
-      }
+    auth_key = "bcd151073c03b352e1ef2fd66c32209da9ca0afa"
 
-      # ログインできてるかチェック
-      url = "https://radiko.jp/ap/member/webapi/member/login/check"
-      uri = URI.parse(url)
-      https = Net::HTTP.new(uri.host, uri.port)
-      https.use_ssl = true
-      https.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      req = Net::HTTP::Post.new(uri.request_uri)
-      req.delete("Content-Type")
-      req["pragma"] = "no-cache"
-      req["Cahce-Control"] = "no-cache"
-      req["X-Radiko-App"] = "pc_ts"
-      req["X-Radiko-App-Version"] = "4.0.1"
-      req["X-Radiko-User"] = "test-stream"
-      req["X-Radiko-Device"] = "pc"
-      req["Cookie"] = cookie.map{|k,v| "#{k}=#{v}" }.join(";")
-      req.body = '\r\n'
-      response = https.request(req)
-      unless response.class == Net::HTTPOK || response.class == Net::HTTPFound
-        p "にんしょうしっぱい"
-        return response
-      end
-        
-    end
-    
-    
-    
+
+
     ### step0. 保存用ディレクトリの存在の確認 ###
     path_storedir = Pathname.new(Configure.where(key: "storedir").first.value)
     unless File.exist?(path_storedir.to_s)
@@ -83,175 +35,85 @@ class ProgramRecorder
         return 1
       end
     end
-    
-    
-    
-    ### step1. 持ってなかったら player を手に入れる ###
-    path_playerfile = path_storedir + "player.swf"
-    unless File.exist?(path_playerfile.to_s)
-    then
-      begin
-        p "player ファイルがない"
-        open(path_playerfile.to_s, 'wb'){|saved_file|
-          open(playerurl, 'rb'){|read_file|
-            saved_file.write(read_file.read)
-          }
-        }
-        p "player ファイルつくった"
-      rescue
-        p "player ファイルつくれない"
-        return 2
-      end
-    else
-      p "player ファイルある"
-    end
-    
-    
-    
-    ### step2. keydata を抽出する ###
-    path_keyfile = path_storedir + "authkey.png"
-    unless File.exist?(path_keyfile.to_s)
-      p "auhtykey.png がない"
-      if Configure.where(key: "path_swfextract").first==nil ||
-         Configure.where(key: "path_swfextract").first.value==nil ||
-         Configure.where(key: "path_swfextract").first.value.empty?
-      then
-        path_swfextract = "swfextract"
-      else
-        path_swfextract = Configure.where(key: "path_swfextract").first.value
-      end
-      if system("#{path_swfextract} -b 12 #{path_playerfile} -o #{path_keyfile}")
-      then
-        p "authkey.png つくった"
-      else
-        p "authkey.png つくれない"
-        return 3
-      end
-      else
-      p "authkey.png がある"
-    end
-    
-    
-    
-    ### step3. auth1_fms して paritalkey を抽出する ###
-    url = "https://radiko.jp/v2/api/auth1_fms"
-    uri = URI.parse(url)
-    https = Net::HTTP.new(uri.host, uri.port)
-    https.use_ssl = true
-    https.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    req = Net::HTTP::Post.new(uri.request_uri)
-    req.delete("Content-Type")
-    req["pragma"] = "no-cache"
-    req["X-Radiko-App"] = "pc_ts"
-    req["X-Radiko-App-Version"] = "4.0.1"
-    req["X-Radiko-User"] = "test-stream"
-    req["X-Radiko-Device"] = "pc"
-    req["Cookie"] = cookie.map{|k,v| "#{k}=#{v}" }.join(";") if premium
-    req.body = '\r\n'
-    req.body = '\r\n'
-    response = https.request(req)
-      unless response.class == Net::HTTPOK || response.class == Net::HTTPFound
-      p "auth1_fms につながらない"
-      return response
-    end
-    auth1_params = Hash[response.body.match(/^(.+=.+\r\n)+/).to_s.scan(/(.+)=(.+)\r\n/)]
-    authtoken = auth1_params["X-Radiko-AuthToken"]
-    keylength = auth1_params["X-Radiko-KeyLength"].to_i
-    keyoffset = auth1_params["X-Radiko-KeyOffset"].to_i
-    partialkey =
-      Base64.encode64(File.binread(path_keyfile.to_s, keylength, keyoffset)).chomp
-    
-    
-    
-    ### step4. auth2_fms する ###
-    url = "https://radiko.jp/v2/api/auth2_fms"
-    uri = URI.parse(url)
-    https = Net::HTTP.new(uri.host, uri.port)
-    https.use_ssl = true
-    https.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    req = Net::HTTP::Post.new(uri.request_uri)
-    req.delete("Content-Type")
-    req["pragma"] = "no-cache"
-    req["X-Radiko-App"] = "pc_ts"
-    req["X-Radiko-App-Version"] = "4.0.0"
-    req["X-Radiko-User"] = "test-stream"
-    req["X-Radiko-Device"] = "pc"
-    req["X-Radiko-Authtoken"] = authtoken
-    req["X-Radiko-Partialkey"] = partialkey
-    req["Cookie"] = cookie.map{|k,v| "#{k}=#{v}" }.join(";") if premium
-    req.body = '\r\n'
-    req.body = '\r\n'
-    response = https.request(req)
-    unless response.class == Net::HTTPOK || response.class == Net::HTTPFound
-      p "auth2_fms につながらない"
-      return response
-    end
-    
-    
-    
-    ### step5. stream-url を取得する ###
-    url = "http://radiko.jp/v2/station/stream_multi/#{station_id}.xml"
+
+
+
+    ### step1. auth1 して paritalkey を抽出する ###
+    url = "https://radiko.jp/v2/api/auth1"
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
-    req = Net::HTTP::Get.new(uri.request_uri)
-    response = http.request(req)
-    stream_urls = Hash[response.body.match(/(<item.+<\/item>\s*)+/).to_s.
-                        scan(/<.+areafree=\"(0|1)\">(.+)<\/.+>/)]
-    if premium
-    then
-      stream_url = stream_urls["1"]
-    else
-      stream_url = stream_urls["0"]
-    end
-    
-    
-    
-    ### step6. stream-url を分割する ###
-    url_parts = stream_url.scan(%r!(.+://.+)/(.+)/(.+)!)[0].to_a
-    
-    
-    
-    ### step7. 録音 ###
-    # 録音のための一時的なファイル名を生成
-    tempfile_base = Dir.tmpdir + "/" + SecureRandom.urlsafe_base64(8)
-    tempfile_flv = tempfile_base + ".flv"
-    
-    if Configure.where(key: "path_rtmpdump").first==nil ||
-       Configure.where(key: "path_rtmpdump").first.value==nil ||
-       Configure.where(key: "path_rtmpdump").first.value.empty?
-    then
-      path_rtmpdump = "rtmpdump"
-    else
-      path_rtmpdump = Configure.where(key: "path_rtmpdump").first.value
-    end
-    cmd_rtmpdump = path_rtmpdump
-    cmd_rtmpdump += " --rtmp #{url_parts[0]}"
-    cmd_rtmpdump += " --app #{station_id}/#{url_parts[1]}"
-    cmd_rtmpdump += " --playpath #{url_parts[2]}"
-    cmd_rtmpdump += " --swfVfy #{playerurl}"
-    cmd_rtmpdump += " --conn S:\"\" --conn S:\"\" --conn S:\"\" --conn S:#{authtoken}"
-    cmd_rtmpdump += " --live"
-    cmd_rtmpdump += " --stop #{recording_second}"
-    cmd_rtmpdump += " --flv \'#{tempfile_flv}\'"
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    headers = Hash.new()
+    headers["User-Agent"] = "curl/7.56.1"
+    headers["Accept"] = "*/*"
+    headers["X-Radiko-App"] = "pc_html5"
+    headers["X-Radiko-App-Version"] = "0.0.1"
+    headers["X-Radiko-User"] = "dummy_user"
+    headers["X-Radiko-Device"] = "pc"
 
-    status = system(cmd_rtmpdump)
+    response = http.get(uri.path, headers)
 
-    if status
-    then
-      p "ろくおんせいこう"
-    else
-      p "ろくおんしっぱい"
-      p "params..."
-      p "station_id: #{station_id}"
-      p "command..."
-      p "#{cmd_rtmpdump}"
-      FileUtils.rm(tempfile_flv)
-      return 4
+    unless response.class == Net::HTTPOK || response.class == Net::HTTPFound
+      p "auth1_fms につながらない"
+      p response.code
+      return response
     end
-    
-    
-    
-    ### step8. 音声部分を抽出 ###
+
+    auth_token = response["X-Radiko-AuthToken"]
+    keylength = response["X-Radiko-KeyLength"].to_i
+    keyoffset = response["X-Radiko-KeyOffset"].to_i
+    partialkey = Base64.encode64(auth_key.slice(keyoffset, keylength)).chomp
+
+
+
+    ### step2. auth2 する ###
+    url = "https://radiko.jp/v2/api/auth2"
+    uri = URI.parse(url)
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    headers = Hash.new()
+    headers["X-Radiko-AuthToken"] = auth_token
+    headers["X-Radiko-Partialkey"] = partialkey
+    headers["X-Radiko-User"] = "dummy_user"
+    headers["X-Radiko-Device"] = "pc"
+
+    response = http.get(uri.path, headers)
+
+    unless response.class == Net::HTTPOK || response.class == Net::HTTPFound
+      p "auth2_fms につながらない"
+      p response.code
+      return response
+    end
+
+
+
+    ### step3. m3u8 を取得する ###
+    url = "http://f-radiko.smartstream.ne.jp/" + station_id + "/_definst_/simul-stream.stream/playlist.m3u8"
+    uri = URI.parse(url)
+    http = Net::HTTP.new(uri.host, uri.port)
+    headers = Hash.new()
+    headers["X-Radiko-AuthToken"] = auth_token
+
+    response = http.get(uri.path, headers)
+
+    unless response.class == Net::HTTPOK || response.class == Net::HTTPFound
+      p "m3u8 につながらない"
+      p response.code
+      if response.code == 403
+        p "たぶんエリア外"
+      elsif response.code == 404
+        p "たぶん station_id が違う"
+      end
+      return response
+    end
+
+    m3u8_url = response.body.match("http.+m3u8")[0]
+
+
+
+    ### step4. 録音する ###
     # ffmpeg のパスを確認
     if Configure.where(key: "path_ffmpeg").first==nil ||
        Configure.where(key: "path_ffmpeg").first.value==nil ||
@@ -262,67 +124,32 @@ class ProgramRecorder
       path_ffmpeg = Configure.where(key: "path_ffmpeg").first.value
     end
 
-    # 一時ファイル名の生成
-    tempfile_aac = tempfile_base + ".aac"
-    
-    # 抽出
-    cmd_ffmpeg = path_ffmpeg
-    cmd_ffmpeg += " -y -i #{tempfile_flv}"
-    cmd_ffmpeg += " -f adts -vn -c:a copy #{tempfile_aac}"
-    
-    # 抽出
-    status = system(cmd_ffmpeg)
-    
-    if status
-    then
-      p "おんせいちゅうしゅつせいこう"
-    else
-      p "おんせいちゅうしゅつしっぱい"
-      return 5
-    end
-
-    # 一時ファイルを削除
-    FileUtils.rm(tempfile_flv)
-
-    
-    
-    ### step9. コンテナ変換 ###
-    # mp4box のパスを確認
-    if Configure.where(key: "path_mp4box").first==nil ||
-       Configure.where(key: "path_mp4box").first.value==nil ||
-       Configure.where(key: "path_mp4box").first.value.empty?
-    then
-      path_mp4box = "mp4box"
-    else
-      path_mp4box = Configure.where(key: "path_mp4box").first.value
-    end
-
-    p path_mp4box
-    
-    # コンテナを入れ替え
     filename_replaced = filename.gsub(/ /,'\ ') # 半角スペースへの対応
-    #p filename_replaced
-    cmd_mp4box = path_mp4box
-    cmd_mp4box += " -add #{tempfile_aac} #{filename_replaced} -sbr"
-    #cmd_mp4box += " -add #{tempfile_aac} #{filename} -sbr"
-    p cmd_mp4box
-    
-    status = system(cmd_mp4box)
-    
+    cmd_ffmpeg = path_ffmpeg
+    cmd_ffmpeg += " -loglevel warning"
+    cmd_ffmpeg += " -headers 'X-Radiko-Authtoken:#{auth_token}'"
+    cmd_ffmpeg += " -i '#{m3u8_url}'"
+    cmd_ffmpeg += " -t #{recording_second}"
+    cmd_ffmpeg += " -y #{filename_replaced}"
+
+    status = system(cmd_ffmpeg)
+
     if status
     then
-      p "こんてないれかえせいこう"
+      p "ろくおんせいこう"
     else
-      p "こんてないれかえしっぱい"
-      return 6
+      p "ろくおんしっぱい"
+      p "params..."
+      p "station_id: #{station_id}"
+      p "command..."
+      p "#{cmd_ffmpeg}"
+      FileUtils.rm(filename)
+      return 4
     end
 
-    # 一時ファイルを削除
-    FileUtils.rm(tempfile_aac)
-    
-    
-    
-    ### step10. タグを編集 ###
+
+
+    ### step5. タグを編集 ###
     TagLib::MP4::File.open(filename) do |file|
       tag = file.tag
       tag.album = "#{album}" if album.present?
@@ -333,4 +160,3 @@ class ProgramRecorder
     end
   end
 end
-  

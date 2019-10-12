@@ -19,14 +19,7 @@ Radikko と連動して redis が起動するようにはなっていないの�
 javascript エンジン．
 
 ### ffmpeg ###
-録音結果からの音声抽出に必要．
-
-### rtmpdump ###
 録音に必要．
-
-### swfextract ###
-録音に必要．
-ubuntu だと `apt install swftools` で入る．
 
 ### MP4Box ###
 コンテナ入れ替えに必要．

@@ -22,17 +22,17 @@ javascript エンジン．
 
 ### MP4Box ###
 コンテナ入れ替えに必要．
-FreeBSD であれば，ports を使って multimedia/mp4v2 で入手できる．
+FreeBSD だったら `pkg install gpac-mp4box` で入る．
 ubuntu だったら `apt install gpac` で入る．
 
 ### TagLib ###
 曲名つけたりとか．
-FreeBSD であれば，ports を使って audio/taglib で入手できる．
+FreeBSD だったら `pkg install taglib` で入る．
 ubuntu だったら `apt install libtag1-dev` で入る．
 
 ### bundler ###
 インストールするのに使う．
-FreeBSD であれば，ports を使って sysutls/rubygem-bundler で入手できる．
+FreeBSD だったら `pkg install rubygem-bundler~ で入る．
 
 ### yarn ###
 development 環境のときに必要？

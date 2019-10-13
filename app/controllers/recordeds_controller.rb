@@ -20,9 +20,8 @@ class RecordedsController < ApplicationController
   end
 
   def download
-    file_name = ERB::Util.url_encode(@recording.filename)
     file_path = Configure.where(key: "storedir").first.value + "/" + @recording.filename
-    send_file(file_path, filename: file_name)
+    send_file(file_path, filename: @recording.filename)
   end
 
   private

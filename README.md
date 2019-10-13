@@ -75,6 +75,9 @@ For Production environment
 credentials が必要になるので，初回のみ
 `EDITOR=vim bundle exec rails credentials:edit` する（編集は必要ない）．
 
+precompiled assets が必要になるので，新しいコミットを取り込むたびに
+`bundle exec rails assets:precompile` するようにする．
+
 Production 環境で動かすとき，assets は Puma から提供されないので，
 フロントエンドサーバから `public/assets` へ直接向ける．
 

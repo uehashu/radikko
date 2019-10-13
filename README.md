@@ -69,7 +69,23 @@ radikko 本体は `bundle exec rails s` で動く．
 とりあえずかんたんにテストするには，`bundle exec sidekiq` だけで動き出す．
 
 
+
+For Production environment
+--------------------------
+credentials が必要になるので，初回のみ
+`EDITOR=vim bundle exec rails credentials:edit` する（編集は必要ない）．
+
+Production 環境で動かすとき，assets は Puma から提供されないので，
+フロントエンドサーバから `public/assets` へ直接向ける．
+
+
+
 注意点
 ------
-
 サーバがちゃんと JST かどうかは確認しておく．
+
+フロントエンドサーバを介さずに直接使いたいときは，
+`config/environments/production.rb` を以下のように書き換える．
+```
+config.public_file_server.enabled = true
+```

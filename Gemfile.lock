@@ -132,7 +132,7 @@ GEM
     nokogiri (1.10.5)
       mini_portile2 (~> 2.4.0)
     public_suffix (4.0.1)
-    puma (3.12.1)
+    puma (3.12.2)
     rack (2.0.7)
     rack-protection (2.0.7)
       rack
@@ -257,7 +257,7 @@ DEPENDENCIES
   kaminari
   kaminari-bootstrap
   listen (>= 3.0.5, < 3.2)
-  puma (~> 3.11)
+  puma (~> 3.12)
   rails (~> 6.0.0)
   sass-rails (~> 5)
   selenium-webdriver

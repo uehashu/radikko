@@ -11,7 +11,8 @@ class RecordingWorker
     recording = Recording.find(recording_id)
 
     recording.update_attribute(:is_recorded, true)
-    filename_full = Configure.where(key: "storedir").first.value + "/" + recording.filename
+    storedir = Configure.where(key: "storedir").first.value || "/var/radikko"
+    filename_full = storedir + "/" + recording.filename
     ProgramRecorder.record(recording.station_id,
                            recording.recording_second,
                            filename_full,

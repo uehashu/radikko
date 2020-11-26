@@ -7,8 +7,8 @@ gem 'rails', '~> 6.0.0'
 gem 'sqlite3', '~> 1.4'
 # Use Puma as the app server
 gem 'puma', '~> 3.12'
-# Use SCSS for stylesheets
-gem 'sass-rails', '~> 5'
+# Use SCSSC for stylesheets
+gem 'sassc-rails', '~> 2'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 gem 'webpacker', '~> 4.0'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
@@ -65,3 +65,6 @@ gem 'kaminari-bootstrap'
 gem 'jquery-rails'
 
 gem 'foreman'
+
+# Sprockets4.0だと、app/assetsディレクトリを削除するとSprockets::Railtie::ManifestNeededErrorが発生する
+gem 'sprockets', '~> 3.7.2'

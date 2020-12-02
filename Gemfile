@@ -68,3 +68,6 @@ gem 'foreman'
 
 # Sprockets4.0だと、app/assetsディレクトリを削除するとSprockets::Railtie::ManifestNeededErrorが発生する
 gem 'sprockets', '~> 3.7.2'
+
+# thor1.0.0以上だと、bundle execでコケまくるのでバージョンを固定する
+gem 'thor', '~> 0.20.3'

@@ -12,7 +12,13 @@ class RecordedsController < ApplicationController
   # DELETE /recorded/1
   def destroy
     @recording.destroy
-    file_path = Configure.where(key: "storedir").first.value + "/" + @recording.filename
+    storedir = "/var/radikko"
+    if Configure.exists?(key: 'storedir') &&
+         !Configure.find_by(key: 'storedir').value.blank?
+      storedir = Configure.find_by(key: 'storedir').value
+    end
+    
+    file_path = storedir + "/" + @recording.filename
     if File.exist?(file_path)
       File.delete(file_path)
     end
@@ -20,7 +26,13 @@ class RecordedsController < ApplicationController
   end
 
   def download
-    file_path = Configure.where(key: "storedir").first.value + "/" + @recording.filename
+    storedir = "/var/radikko"
+    if Configure.exists?(key: 'storedir') &&
+         !Configure.find_by(key: 'storedir').value.blank?
+      storedir = Configure.find_by(key: 'storedir').value
+    end
+
+    file_path = storedir + "/" + @recording.filename
     send_file(file_path, filename: @recording.filename)
   end
 

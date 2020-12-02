@@ -25,7 +25,12 @@ class ProgramRecorder
 
 
     ### step0. 保存用ディレクトリの存在の確認 ###
-    path_storedir = Pathname.new(Configure.where(key: "storedir").first.value)
+    storedir = '/var/radikko'
+    if Configure.exists?(key: 'storedir') &&
+         !Configure.find_by(key: 'storedir').value.blank?
+      storedir = Configure.find_by(key: 'storedir').value
+    end
+    path_storedir = Pathname.new(storedir)
     unless File.exist?(path_storedir.to_s)
     then
       p "ディレクトリがない"

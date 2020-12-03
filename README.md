@@ -60,8 +60,10 @@ apt install sqlite3 libsqlite3-dev
 How to Use
 ----------
 
+実行環境により，ほとんどの動作は `sudo -u www-data` とかで動かすべきかもしれない．
+
 1. 上述の依存パッケージを導入しておく．
-2. `git clone` してくる．
+2. `git clone` してくる．`/var/www/` とかでやるべきかもしれない．
 3. `bundle install` で gem を持ってくる．（環境を汚したくない場合は `bundle install --path vendor/bundle`）
 4. db を作る．`bundle exec rails db:migrate` で．production 環境であれば，`bundle exec rails db:migrate RAILS_ENV=production`で．
 5. エリア ID を格納し，初回のクロールを行う．`bundle exec rails db:seed` もしくは `bundle exec rails db:seed RAILS_ENV=production`
@@ -69,8 +71,8 @@ How to Use
 7. `bundle exec foreman start` で production 環境で動く．development 環境で
 動かすときは `bundle exec foreman start -f Procfile.development` で．
 
-systemd や upstart のスクリプトは `bundle exec foreman export FORMAT /STARTUP.d/` とかで
-出力できる．はず．
+systemd や upstart のスクリプトは `bundle exec foreman export -a radikko -u www-data FORMAT /STARTUP.d/` とかで
+出力できる．ubuntu だったら `bundle exec foreman export -a radikko -u www-data systemd /etc/systemd/syste` で，`systemd enable radikko.target` みたいな．
 
 
 For Production environment

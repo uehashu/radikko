@@ -135,7 +135,7 @@ GEM
       mini_portile2 (~> 2.7.0)
       racc (~> 1.4)
     public_suffix (4.0.6)
-    puma (4.3.10)
+    puma (4.3.12)
       nio4r (~> 2.0)
     racc (1.6.0)
     rack (2.2.3)
@@ -259,7 +259,7 @@ DEPENDENCIES
   kaminari
   kaminari-bootstrap
   listen (>= 3.0.5, < 3.2)
-  puma (~> 4.3.9)
+  puma (~> 4.3.12)
   rails (~> 6.0.0)
   sassc-rails (~> 2)
   selenium-webdriver
